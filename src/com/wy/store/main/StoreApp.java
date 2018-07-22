@@ -3,6 +3,7 @@ package com.wy.store.main;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import com.wy.store.modules.devices.list.DeviceListView;
 import com.wy.store.modules.login.LoginViewImpl;
 import com.wy.store.modules.users.list.UserListView;
 import com.wy.store.ui.MainScreen;
@@ -34,8 +35,9 @@ public class StoreApp {
 //               System.out.println("UnsupportedLookAndFeelException: " + e.getMessage());
 //       }
 //		   
-  			new LoginViewImpl();
+//  			new LoginViewImpl();
 
+		new MainScreen();
 		   
 		// javax.swing.SwingUtilities.invokeLater(new Runnable() {
 		// public void run() {

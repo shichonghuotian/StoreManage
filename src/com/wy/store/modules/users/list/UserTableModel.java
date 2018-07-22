@@ -11,6 +11,8 @@ import com.wy.store.bean.User;
 
 public class UserTableModel extends AbstractTableModel {
 
+	
+	
 	/**
 	 * 
 	 */
@@ -19,6 +21,7 @@ public class UserTableModel extends AbstractTableModel {
 	
 	public UserTableModel(List<User> list) {
 		this.list = list;
+	
 	}
 	
 	@Override

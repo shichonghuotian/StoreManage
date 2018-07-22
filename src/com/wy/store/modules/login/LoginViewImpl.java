@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -15,6 +16,8 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
+
+import com.wy.store.common.view.PlaceholderTextField;
 
 //登陆页面
 public class LoginViewImpl extends JFrame implements LoginView{
@@ -42,7 +45,6 @@ public class LoginViewImpl extends JFrame implements LoginView{
 		//生成frame
 		setTitle("登陆");
 
-		setSize(300, 300);
 //		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -52,7 +54,7 @@ public class LoginViewImpl extends JFrame implements LoginView{
 		
 		JPanel panel = new JPanel();
 		panel.setBackground(Color.RED);
-		add(panel);
+		getContentPane().add(panel);
 		initLayout(panel);
 		JMenuBar menuBar = new JMenuBar();
 		
@@ -66,6 +68,8 @@ public class LoginViewImpl extends JFrame implements LoginView{
 		
 		this.setJMenuBar(menuBar);
 		pack();
+		setSize(300, 300);
+
 		setVisible(true);
 
 	}
@@ -73,8 +77,10 @@ public class LoginViewImpl extends JFrame implements LoginView{
 	public void initLayout(JPanel panel) {
 //		panel.setLayout(null);
 		
+		JLabel nameLabel = new JLabel("管理员");
 		nameTextField  = new JTextField();
-		
+		JLabel pwdLabel = new JLabel("密码");
+
 		pwdTextField = new JPasswordField();
 		
 		loginButton = new JButton("Lgoin");
@@ -90,9 +96,12 @@ public class LoginViewImpl extends JFrame implements LoginView{
 				
 			}
 		});
-		panel.setLayout(new GridLayout(3, 1,0 ,10) );
+		panel.setLayout(new GridLayout(5, 1) );
+		panel.add(nameLabel);
 
 		panel.add(nameTextField);
+		panel.add(pwdLabel);
+
 		panel.add(pwdTextField);
 		panel.add(loginButton);
 		

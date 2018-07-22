@@ -11,14 +11,21 @@ import javax.swing.table.TableModel;
 
 import com.wy.store.bean.User;
 
+//用户列表，这里显示出所有的用户数据
 public class UserListView extends JFrame{
 
 	
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	JTable mTable;
 	
 	JScrollPane mScrollPane;
 	
-	TableModel userTableModel;
+	TableModel mUserTableModel;
 
 	public UserListView() {
 		// TODO Auto-generated constructor stub
@@ -43,9 +50,9 @@ public class UserListView extends JFrame{
 			list.add(user);
 		}
 		
-		userTableModel = new UserTableModel(list);
+		mUserTableModel = new UserTableModel(list);
 		
-		mTable = new JTable(userTableModel);
+		mTable = new JTable(mUserTableModel);
 		mTable.setFillsViewportHeight(false);
 		
 		mScrollPane = new JScrollPane(mTable);
