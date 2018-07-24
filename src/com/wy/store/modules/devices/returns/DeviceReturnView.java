@@ -47,7 +47,6 @@ public class DeviceReturnView extends JPanel{
 	//显示当前时间即可，归还时间
 		
 	private JLabel mDateLabel;
-	private JTextField textField;
 
 	private Device mCurrentDevice;
 	

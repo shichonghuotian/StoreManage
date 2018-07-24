@@ -1,12 +1,7 @@
-package com.wy.store.main;
-
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+package com.wy.store.app;
 
 import com.wy.store.modules.devices.list.DeviceListView;
-import com.wy.store.modules.login.LoginViewImpl;
-import com.wy.store.modules.users.list.UserListView;
-import com.wy.store.ui.MainScreen;
+import com.wy.store.modules.main.MainScreen;
 
 //0000如果做本地应用，不考虑网络交互，其实可以直接用mvc模式，缺点就是膨胀的controller
 //如果用mvp，好处就是可以替换model中的一些业务逻辑，
@@ -37,7 +32,8 @@ public class StoreApp {
 //		   
 //  			new LoginViewImpl();
 
-		new MainScreen();
+//		new MainScreen();
+		new DeviceListView();
 		   
 		// javax.swing.SwingUtilities.invokeLater(new Runnable() {
 		// public void run() {
