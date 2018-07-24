@@ -1,9 +1,21 @@
 package com.wy.store.bean;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.GenericGenerator;
+
+
+@Entity
+@Table(name="t_user")
 public class User {
 
-	//用户id
-	private String userID;
+	@Id
+	 private String userID;
 	
 	//指纹识别号
 	private String fingerID;

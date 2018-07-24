@@ -13,6 +13,13 @@ apply plugin: 'java-library'
 repositories {
     // Use jcenter for resolving your dependencies.
     // You can declare any Maven/Ivy/file repository here.
+       maven { url "http://oss.sonatype.org/content/repositories/snapshots" }
+jcenter { url "http://jcenter.bintray.com/"}
+maven { url "http://repo1.maven.org/maven2"}
+maven { url "https://jitpack.io" }
+    
+    maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+    
     jcenter()
 }
 
@@ -20,11 +27,12 @@ repositories {
 dependencies {
   	 testImplementation 'junit:junit:4.12'
 
- 	api  'org.hibernate:hibernate-core:5.1.0.Final'
-    	api  'org.hibernate:hibernate-c3p0:5.1.0.Final'
-    	api  'org.hibernate:hibernate-entitymanager:5.1.0.Final'
-    	api  'org.hibernate:hibernate-ehcache:5.1.0.Final'
-   		 api  'org.xerial:sqlite-jdbc:3.23.1'      
+ 	api  'org.hibernate:hibernate-core:5.2.10.Final'
+
+   		 api  'org.xerial:sqlite-jdbc:3.8.11.2'     
+   		 
+   		  
+     //	api  'com.github.gwenn:sqlite-dialect:master'
     
 }
 
