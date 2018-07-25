@@ -22,9 +22,17 @@ maven { url "https://jitpack.io" }
     
     jcenter()
 }
+ext {
+    jvmVersion = "1.8"
+    springVersion = "4.0.6.RELEASE"
+    sl4jVersion = "1.7.6"
+}
 
 
 dependencies {
+
+    def springVersion = "4.0.6.RELEASE"
+
   	 testImplementation 'junit:junit:4.12'
 
  	api  'org.hibernate:hibernate-core:5.2.10.Final'
