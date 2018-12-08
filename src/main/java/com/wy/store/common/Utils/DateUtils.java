@@ -18,6 +18,7 @@ public class DateUtils {
 	
 	public static String getCustomFormatDateString(Date date) {
 
+		if(date == null) return "";
 		
         return standardDateFormat.format(date);
 

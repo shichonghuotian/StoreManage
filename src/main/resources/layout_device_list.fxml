@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="516" prefWidth="850" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+	<children>
+		<AnchorPane prefHeight="45.0" prefWidth="668.0">
+			<children>
+				<Button layoutX="8.0" layoutY="9.0" mnemonicParsing="false" onAction="#addAction" text="添加" />
+				<Button layoutX="131.0" layoutY="9.0" mnemonicParsing="false" onAction="#deleteAction" text="删除" />
+				<Button layoutX="66.0" layoutY="9.0" mnemonicParsing="false" onAction="#editAction" text="修改" />
+				<ComboBox fx:id="mSearchComboBox" layoutX="282.0" layoutY="9.0" prefHeight="27.0" prefWidth="118.0" />
+				<TextField fx:id="mSearchTextField" layoutX="410.0" layoutY="9.0" prefHeight="27.0" prefWidth="159.0" promptText="输入" />
+				<ComboBox fx:id="mCategoryComboBox" layoutX="579.0" layoutY="9.0" prefHeight="27.0" prefWidth="118.0" />
+				<ComboBox fx:id="mWarehouseComboBox" layoutX="725.0" layoutY="9.0" prefHeight="27.0" prefWidth="118.0" />
+			</children>
+		</AnchorPane>
+		<TableView fx:id="mTableView" layoutX="4.0" layoutY="42.0" prefHeight="468.0" prefWidth="843.0">
+
+		</TableView>
+	</children>
+</AnchorPane>

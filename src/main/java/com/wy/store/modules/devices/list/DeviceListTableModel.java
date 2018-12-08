@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import com.wy.store.bean.Device;
+import com.wy.store.domain.Device;
 
 public class DeviceListTableModel extends AbstractTableModel {
 
@@ -37,9 +37,9 @@ public class DeviceListTableModel extends AbstractTableModel {
             for(int j=0;j<titles.length;j++){
             	
             	Device device = list.get(i);
-            	datas[i][0]=device.getID();
+            	datas[i][0]=device.getId();
             	datas[i][1]=device.getName();
-            	datas[i][2]=device.getDeviceID();
+            	datas[i][2]=device.getDeviceId();
             	datas[i][3]=device.getCategory().getName();
 
             	datas[i][4]=device.getWarehouse().getName();

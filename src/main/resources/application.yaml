@@ -1,0 +1,8 @@
+spring:
+    jmx: 
+        enabled: false
+        
+javafx:
+    title: 工具管理系统
+    stage:
+        resizable: true

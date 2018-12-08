@@ -13,34 +13,61 @@ apply plugin: 'java-library'
 repositories {
     // Use jcenter for resolving your dependencies.
     // You can declare any Maven/Ivy/file repository here.
-       maven { url "http://oss.sonatype.org/content/repositories/snapshots" }
-jcenter { url "http://jcenter.bintray.com/"}
-maven { url "http://repo1.maven.org/maven2"}
-maven { url "https://jitpack.io" }
+     mavenLocal()   
+     mavenCentral() //maven中心仓库
+    jcenter()
+     maven { url "http://oss.sonatype.org/content/repositories/snapshots" }
+	jcenter { url "http://jcenter.bintray.com/"}
+	maven { url "http://repo1.maven.org/maven2"}
+	maven { url "https://jitpack.io" }
     
     maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
-    
-    jcenter()
 }
 ext {
     jvmVersion = "1.8"
-    springVersion = "4.0.6.RELEASE"
+    springVersion = "5.0.6.RELEASE"
     sl4jVersion = "1.7.6"
 }
 
 
 dependencies {
 
-    def springVersion = "4.0.6.RELEASE"
+    def springVersion = "5.0.6.RELEASE"
 
+	api fileTree(dir:'libs',include:['*.jar'])
   	 testImplementation 'junit:junit:4.12'
 
- 	api  'org.hibernate:hibernate-core:5.2.10.Final'
+ //	api  'org.hibernate:hibernate-core:5.2.10.Final'
 
    		 api  'org.xerial:sqlite-jdbc:3.8.11.2'     
    		 
-   		  
+    api 'com.j256.ormlite:ormlite-core:5.1'  
+    api 'com.j256.ormlite:ormlite-jdbc:5.1'   		 
+     
      //	api  'com.github.gwenn:sqlite-dialect:master'
+      //  api("org.springframework:spring-aop:$springVersion",
+        //    "org.springframework:spring-core:$springVersion",
+          //  "org.springframework:spring-context-support:$springVersion",
+            //"org.springframework:spring-context:$springVersion",
+            //"org.springframework:spring-beans:$springVersion",
+            //"org.springframework:spring-aspects:$springVersion",
+            //"org.springframework:spring-test:$springVersion",
+     //)
+     api 'org.apache.logging.log4j:log4j-api:2.6.2'
+     api 'org.apache.logging.log4j:log4j-core:2.6.2'
+    
+   // api 'de.roskenet:springboot-javafx-support:2.1.6'
+     //  compile("org.springframework.boot:spring-boot-starter-web")
+   // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter
+
+//rxjava
+		api 'io.reactivex.rxjava2:rxjavafx:2.2.2'
+    	api 'io.reactivex.rxjava2:rxjava:2.2.2'
+      // 	api 'io.datafx:flow:8.0.1'
+      
+     	api 'org.springframework.boot:spring-boot-starter:2.0.0.RELEASE'
+     	
+     	
     
 }
 

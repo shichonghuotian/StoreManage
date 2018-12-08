@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="516" prefWidth="850" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <AnchorPane prefHeight="381.0" prefWidth="659.0">
+         <children>
+            <Pane prefHeight="61.0" prefWidth="437.0">
+               <children>
+                  <Button fx:id="mDeleteButton" layoutX="72.0" layoutY="14.0" mnemonicParsing="false" onAction="#deleteAction" text="删除" />
+                  <Button fx:id="mAddButton" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#addAction" text="添加" />
+                  <Button fx:id="mEditButton" layoutX="126.0" layoutY="14.0" mnemonicParsing="false" onAction="#editAction" text="编辑" />
+               </children>
+            </Pane>
+            <TableView fx:id="mTableView" layoutX="4.0" layoutY="54.0" prefHeight="454.0" prefWidth="836.0">
+            <!--   <columns>
+                <TableColumn prefWidth="75.0" text="C1" />
+                <TableColumn prefWidth="75.0" text="C2" />
+              </columns> -->
+            </TableView>
+            <TextField fx:id="mSearchTextField" layoutX="651.0" layoutY="17.0" prefHeight="27.0" prefWidth="175.0" promptText="搜索" />
+            <ComboBox fx:id="mSearchComboBox" layoutX="516.0" layoutY="17.0" prefHeight="27.0" prefWidth="116.0" />
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

@@ -4,8 +4,8 @@ import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
 
-import com.wy.store.bean.Category;
-import com.wy.store.bean.Warehouse;
+import com.wy.store.domain.Category;
+import com.wy.store.domain.Warehouse;
 
 public class WarhouseComboBoxModel extends DefaultComboBoxModel<String>{
 

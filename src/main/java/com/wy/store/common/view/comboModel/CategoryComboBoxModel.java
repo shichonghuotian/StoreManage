@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
 
-import com.wy.store.bean.Category;
+import com.wy.store.domain.Category;
 
 public class CategoryComboBoxModel extends DefaultComboBoxModel<String>{
 

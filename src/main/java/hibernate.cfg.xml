@@ -17,6 +17,7 @@
 		
 	        
 		 <mapping class="com.wy.store.bean.User"></mapping>
+				 <mapping class="com.wy.store.bean.UserImage"></mapping>
 		
 	</session-factory>
 </hibernate-configuration>
