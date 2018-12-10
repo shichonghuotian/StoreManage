@@ -144,8 +144,11 @@ public abstract class WFxViewController implements Initializable{
 			Stage stage = (Stage)getKeyWindow();
 			System.out.println(" dismissController " + stage);
 
+			
 			stage.close();
 
+			stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST
+					 ));
 		}
 		
 	}

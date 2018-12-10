@@ -2,7 +2,10 @@ package com.wy.store.modules.devices.category;
 
 import java.util.List;
 
+import com.google.common.eventbus.Subscribe;
 import com.wy.store.app.BaseViewController;
+import com.wy.store.common.eventbus.RxEventBus;
+import com.wy.store.common.eventbus.WEventBus;
 import com.wy.store.db.dao.CategoryDao;
 import com.wy.store.db.dao.impl.CategoryDaoImpl;
 import com.wy.store.domain.Category;
@@ -35,6 +38,7 @@ public class DeviceCategoryListController extends BaseViewController{
 	public void onCreate(WFxIntent intent) {
 		// TODO Auto-generated method stub
 		super.onCreate(intent);
+		
 		mCategoryDao = new CategoryDaoImpl();
 		
 		List<Category> list = mCategoryDao.getAll();
@@ -50,9 +54,27 @@ public class DeviceCategoryListController extends BaseViewController{
 		mTableView.setItems(observableList);
 
 
+		WEventBus.getDefaultEventBus().register(this);
+		
 	}
 	
+	@Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		WEventBus.getDefaultEventBus().unregister(this);
 
+		
+	}
+
+	@Subscribe
+	public void onRefresh(WCategoryEvent o) {
+		List<Category> list = mCategoryDao.getAll();
+
+		observableList.clear();
+		observableList.addAll(list);
+	}
+	
 	public void addAction(ActionEvent event) {
 
 		try {

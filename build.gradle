@@ -67,6 +67,7 @@ dependencies {
       
      	api 'org.springframework.boot:spring-boot-starter:2.0.0.RELEASE'
      	
+     	  compile 'com.google.guava:guava:27.0.1-jre'
      	
     
 }

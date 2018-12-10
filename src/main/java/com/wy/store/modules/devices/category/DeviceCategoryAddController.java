@@ -1,7 +1,11 @@
 package com.wy.store.modules.devices.category;
 
+import com.google.common.eventbus.EventBus;
 import com.wy.store.app.BaseViewController;
 import com.wy.store.common.Utils.StringUtils;
+import com.wy.store.common.eventbus.RxEvent;
+import com.wy.store.common.eventbus.RxEventBus;
+import com.wy.store.common.eventbus.WEventBus;
 import com.wy.store.common.view.WAlert;
 import com.wy.store.db.dao.CategoryDao;
 import com.wy.store.db.dao.impl.CategoryDaoImpl;
@@ -45,6 +49,10 @@ public class DeviceCategoryAddController extends BaseViewController {
 				WAlert.showMessageAlert("添加成功");
 
 				mNameTextField.setText("");
+				
+				RxEventBus.getDefault().post(new RxEvent<String>(""));
+				
+				WEventBus.getDefaultEventBus().post(new Object());
 			}
 			
 		}

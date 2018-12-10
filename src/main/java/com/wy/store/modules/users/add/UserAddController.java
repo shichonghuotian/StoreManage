@@ -63,6 +63,8 @@ public class UserAddController extends BaseViewController implements WFingerServ
 	@Override
 	public void onFingerReceived(String fingerId) {
 
+		//记录完成
+		
 	}
 
 	@Override
@@ -71,6 +73,8 @@ public class UserAddController extends BaseViewController implements WFingerServ
 		// 收到通知，记录一下
 
 		// 这里就是处理一下进度条就可以了
+		
+		
 
 		System.out.println("enrollCount + " + enrollCount);
 	}
@@ -82,27 +86,23 @@ public class UserAddController extends BaseViewController implements WFingerServ
 		if(!fingerService.isOpen()) {
 			fingerService.openDevice();
 			
-			fingerService.enrollFinger();
 		}
 	
+		fingerService.enrollFinger();
 
 	}
 
 	public void resetAction(ActionEvent event) {
 
+		fingerProgressBar.setProgress(0);
+		
 		
 	}
 
 	public void cancelAction(ActionEvent event) {
 
-		// new WAlert.Builder().message("确定取消保存用户吗？").create().show();
-
-		Stage stage = (Stage) mFingerTextField.getScene().getWindow();
-
-		stage.close();
-		// exitApp();
-
-		// stage.close();
+	
+		dismissController();
 	}
 
 	public void saveAction(ActionEvent event) {
