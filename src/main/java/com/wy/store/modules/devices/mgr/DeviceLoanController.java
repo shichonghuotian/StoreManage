@@ -162,12 +162,7 @@ public class DeviceLoanController extends BaseViewController implements WFingerS
 		return !StringUtils.isEmpty(mDeviceIdTextField.getText()) && !StringUtils.isEmpty(mUserIdTextField.getText()) ;
 	}
 
-	@Override
-	public void enrollFingerReceived(int fingerId, int enrollCount) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	
 
 
 

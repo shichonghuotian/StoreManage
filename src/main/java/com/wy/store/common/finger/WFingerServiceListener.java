@@ -4,5 +4,4 @@ public interface WFingerServiceListener {
 
 	public void onFingerReceived(String fingerId);
 	
-	public void enrollFingerReceived(int fingerId, int enrollCount);
 }

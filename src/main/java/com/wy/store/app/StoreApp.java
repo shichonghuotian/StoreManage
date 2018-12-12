@@ -12,6 +12,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
 import com.sun.javafx.applet.Splash;
+import com.wy.store.common.finger.WFingerServiceFactory;
 import com.wy.store.modules.main.MainController;
 import com.wy.wfx.core.ann.BindMainController;
 import com.wy.wfx.core.app.WFxApplication;
@@ -144,6 +145,8 @@ public class StoreApp extends WFxApplication {
 	public void stop() throws Exception {
 		super.stop();
 		context.close();
+		
+		WFingerServiceFactory.getFingerService().closeDevice();
 	}
 
 }

@@ -26,6 +26,10 @@ public interface WFingerService {
 	 */
 	public void unregister(WFingerServiceListener listener);
 	
+	public void register(WFingerServiceEnrollListener listener);
+	
+	public void unregister(WFingerServiceEnrollListener listener);
+	
 	/**
 	 * 验证指纹，返回一串id
 	 * @return

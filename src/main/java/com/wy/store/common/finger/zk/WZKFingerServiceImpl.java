@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.wy.store.common.finger.WFingerService;
+import com.wy.store.common.finger.WFingerServiceEnrollListener;
 import com.wy.store.common.finger.WFingerServiceListener;
 import com.zkteco.biometric.FingerprintSensorErrorCode;
 import com.zkteco.biometric.FingerprintSensorEx;
@@ -19,10 +20,15 @@ public class WZKFingerServiceImpl implements WFingerService {
 	private long mhDevice = 0;
 	private long mhDB = 0;
 	// 检查假指纹
-	private boolean isFakeFunOn = true;
+	private boolean isFakeFunOn = false;
 
 	private int enroll_idx = 0;
 
+	//the width of fingerprint image
+	int fpWidth = 0;
+	//the height of fingerprint image
+	int fpHeight = 0;
+	//for verify test
 	private byte[] lastRegTemp = new byte[2048];
 	// the length of lastRegTemp
 	private int cbRegTemp = 0;
@@ -39,8 +45,10 @@ public class WZKFingerServiceImpl implements WFingerService {
 	private int iFid = 1;
 
 
-	private List<WFingerServiceListener> listeners = new ArrayList<>();
+	private List<WFingerServiceEnrollListener> enrollListeners = new ArrayList<>();
 
+
+	private List<WFingerServiceListener> listeners = new ArrayList<>();
 	@Override
 	public int openDevice() {
 		// TODO Auto-generated method stub
@@ -80,12 +88,30 @@ public class WZKFingerServiceImpl implements WFingerService {
 		// 设置编码，默认使用iso
 		FingerprintSensorEx.DBSetParameter(mhDB, 5010, nFmt);
 
+		byte[] paramValue = new byte[4];
+		int[] size = new int[1];
+		//GetFakeOn
+		//size[0] = 4;
+		//FingerprintSensorEx.GetParameters(mhDevice, 2002, paramValue, size);
+		//nFakeFunOn = byteArrayToInt(paramValue);
+		size[0] = 4;
+		FingerprintSensorEx.GetParameters(mhDevice, 1, paramValue, size);
+		fpWidth = byteArrayToInt(paramValue);
+		size[0] = 4;
+		FingerprintSensorEx.GetParameters(mhDevice, 2, paramValue, size);
+		fpHeight = byteArrayToInt(paramValue);
+		//width = fingerprintSensor.getImageWidth();
+		//height = fingerprintSensor.getImageHeight();
+		imgbuf = new byte[fpWidth*fpHeight];
+		//sy
+		System.out.println("open success");
 		// 获取一些图片的参数，到这一步就是启动成功了
 		mbStop = false;
 		workThread = new WorkThread();
 	    workThread.start();// 线程启动
 
 
+	    
 		return FingerprintSensorErrorCode.ZKFP_ERR_OK;
 
 	}
@@ -154,13 +180,19 @@ public class WZKFingerServiceImpl implements WFingerService {
 		//还是需要进行一些判断，譬如是否连接了，是否安装了驱动之类的
 		enroll_idx = 0;
 		this.status = ZKDeviceStatus.ENROLL;
+		
+		System.out.println("-----------------------------enroll finger-----------------------");
 	}
 
 	/**
 	 * 关闭所有的device
 	 */
 	private void freeSensor() {
+		
 		mbStop = true;
+		
+		System.err.println("free sensor = " + mbStop);
+
 		try { // wait for thread stopping
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
@@ -210,19 +242,25 @@ public class WZKFingerServiceImpl implements WFingerService {
 		int[] fid = new int[1];
 		int[] score = new int[1];
 		//检查是否已经登记，也就是已经存在了
+		System.out.println("enroll exectute");
 		int ret = FingerprintSensorEx.DBIdentify(mhDB, template, fid, score);
 		if (ret == 0) {
 
 //				指纹已经存在--需要进行一些操作
+			for(WFingerServiceEnrollListener listener : enrollListeners) {
+				listener.onEnrollReceivedError("当前指纹已经存在");
+			}
 			
-			this.status = ZKDeviceStatus.OPEN;
+			this.status = ZKDeviceStatus.ENROLL;
 			enroll_idx = 0;
 			return;
 		}
 		if (enroll_idx > 0 && FingerprintSensorEx.DBMatch(mhDB, regtemparray[enroll_idx - 1], template) <= 0) {
 //				textArea.setText("please press the same finger 3 times for the enrollment");
 			//如果已经录入了，对比一下指纹是否一致，如果不一致，就需要进行一些提示了
-			
+			for(WFingerServiceEnrollListener listener : enrollListeners) {
+				listener.onEnrollReceivedError("请录入相同的指纹");
+			}
 			return;
 		}
 		System.arraycopy(template, 0, regtemparray[enroll_idx], 0, 2048);
@@ -240,23 +278,30 @@ public class WZKFingerServiceImpl implements WFingerService {
 				// Base64 Template
 //					录入成功
 //					textArea.setText("enroll succ");
-				
-				for(WFingerServiceListener listener : listeners) {
-					listener.enrollFingerReceived(iFid, enroll_idx);
+				System.out.println("enroll succ");
+				for(WFingerServiceEnrollListener listener : enrollListeners) {
+					listener.onEnrollSuccess(iFid);
 				}
 			} else {
 				
 				//录入失败
 //					textArea.setText("enroll fail, error code=" + ret);
+				System.out.println("enroll fail = " + ret);
+				for(WFingerServiceEnrollListener listener : enrollListeners) {
+					listener.onEnrollReceivedError("指纹录入失败,请重置后重新录入");;
+				}
+				
 			}
 			
 			//重置状态
 			this.status = ZKDeviceStatus.OPEN;
 		} else {
 			//继续录入，提示用户还剩余几次
-			for(WFingerServiceListener listener : listeners) {
-				listener.enrollFingerReceived(-1, enroll_idx);
+			for(WFingerServiceEnrollListener listener : enrollListeners) {
+				listener.onEnrollReceived( enroll_idx);;
 			}
+			System.out.println("You need to press the " + (3 - enroll_idx) + " times fingerprint");
+
 //				textArea.setText("You need to press the " + (3 - enroll_idx) + " times fingerprint");
 		}
 	}
@@ -268,6 +313,8 @@ public class WZKFingerServiceImpl implements WFingerService {
 			int ret = 0;
 			while (!mbStop) {
 				templateLen[0] = 2048;
+				System.out.println("-----------------------------WorkThread run-----------------------");
+
 				if (0 == (ret = FingerprintSensorEx.AcquireFingerprint(mhDevice, imgbuf, template, templateLen))) {
 					if (isFakeFunOn) {
 						byte[] paramValue = new byte[4];
@@ -321,5 +368,18 @@ public class WZKFingerServiceImpl implements WFingerService {
 		number |= ((bytes[2] << 16) & 0xFF0000);
 		number |= ((bytes[3] << 24) & 0xFF000000);
 		return number;
+	}
+
+	@Override
+	public void register(WFingerServiceEnrollListener listener) {
+		// TODO Auto-generated method stub
+	
+		enrollListeners.add(listener);
+	}
+
+	@Override
+	public void unregister(WFingerServiceEnrollListener listener) {
+		// TODO Auto-generated method stub
+		enrollListeners.remove(listener);
 	}
 }

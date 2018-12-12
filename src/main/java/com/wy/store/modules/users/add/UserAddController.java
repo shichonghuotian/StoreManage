@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Scope;
 import com.wy.store.app.BaseViewController;
 import com.wy.store.common.Utils.StringUtils;
 import com.wy.store.common.finger.WFingerService;
+import com.wy.store.common.finger.WFingerServiceEnrollListener;
 import com.wy.store.common.finger.WFingerServiceFactory;
 import com.wy.store.common.finger.WFingerServiceListener;
 import com.wy.store.common.view.WAlert;
@@ -15,6 +16,7 @@ import com.wy.store.domain.User;
 import com.wy.wfx.core.ann.ViewController;
 import com.wy.wfx.core.controller.WFxIntent;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -24,7 +26,7 @@ import javafx.stage.Stage;
 
 @ViewController(res = "/layout_user_add")
 @Scope("prototype") // 默认是单例
-public class UserAddController extends BaseViewController implements WFingerServiceListener {
+public class UserAddController extends BaseViewController implements WFingerServiceEnrollListener {
 
 	@FXML
 	TextField mUserCodeTextField;
@@ -59,29 +61,58 @@ public class UserAddController extends BaseViewController implements WFingerServ
 		super.onDestroy();
 		fingerService.unregister(this);
 	}
-
+	
 	@Override
-	public void onFingerReceived(String fingerId) {
-
-		//记录完成
-		
-	}
-
-	@Override
-	public void enrollFingerReceived(int fingerId, int enrollCount) {
+	public void onEnrollSuccess(int fingerId) {
 		// TODO Auto-generated method stub
-		// 收到通知，记录一下
-
-		// 这里就是处理一下进度条就可以了
+		setMsgText("指纹录入成功  id= " +fingerId);
 		
-		
+		Platform.runLater(() -> {
+			
+			fingerProgressBar.setProgress(1);
 
-		System.out.println("enrollCount + " + enrollCount);
+		});
 	}
+
+	@Override
+	public void onEnrollReceived(int enrollCount) {
+		// TODO Auto-generated method stub
+		Platform.runLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				System.out.println("enrollCount  =  " + enrollCount + " progress = " + 1.f/3.f*(float)enrollCount);
+
+				fingerProgressBar.setProgress(1.f/3.f*(float)enrollCount);
+				
+//				fingerMsgLabel.setText("指纹录入成功");
+				setMsgText("请继续录入指纹");
+
+			}
+		});
+	}
+
+	@Override
+	public void onEnrollReceivedError(String error) {
+		// TODO Auto-generated method stub
+//		fingerMsgLabel.setText(error);
+		
+		setMsgText(error);
+	}
+
+
+
+	private void setMsgText(String text) {
+		Platform.runLater(() -> fingerMsgLabel.setText(text));
+	
+	}
+	
 
 
 
 	public void beginAction(ActionEvent event) {
+		System.out.println("beginAction + " );
 
 		if(!fingerService.isOpen()) {
 			fingerService.openDevice();
@@ -96,7 +127,9 @@ public class UserAddController extends BaseViewController implements WFingerServ
 
 		fingerProgressBar.setProgress(0);
 		
-		
+
+		fingerService.enrollFinger();
+
 	}
 
 	public void cancelAction(ActionEvent event) {
@@ -139,5 +172,7 @@ public class UserAddController extends BaseViewController implements WFingerServ
 		return !StringUtils.isEmpty(mUserCodeTextField.getText()) && !StringUtils.isEmpty(mNameTextField.getText())
 				&& !StringUtils.isEmpty(mFingerTextField.getText());
 	}
+
+	
 
 }
