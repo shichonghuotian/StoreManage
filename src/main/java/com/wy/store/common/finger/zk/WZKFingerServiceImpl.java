@@ -6,6 +6,10 @@ import java.util.List;
 import com.wy.store.common.finger.WFingerService;
 import com.wy.store.common.finger.WFingerServiceEnrollListener;
 import com.wy.store.common.finger.WFingerServiceListener;
+import com.wy.store.common.finger.WFingerServiceLoadListener;
+import com.wy.store.db.dao.UserFingerDao;
+import com.wy.store.db.dao.impl.UserFingerDaoImpl;
+import com.wy.store.domain.UserFinger;
 import com.zkteco.biometric.FingerprintSensorErrorCode;
 import com.zkteco.biometric.FingerprintSensorEx;
 
@@ -46,6 +50,7 @@ public class WZKFingerServiceImpl implements WFingerService {
 
 
 	private List<WFingerServiceEnrollListener> enrollListeners = new ArrayList<>();
+	private List<WFingerServiceLoadListener> loadListeners = new ArrayList<>();
 
 
 	private List<WFingerServiceListener> listeners = new ArrayList<>();
@@ -53,12 +58,25 @@ public class WZKFingerServiceImpl implements WFingerService {
 	public int openDevice() {
 		// TODO Auto-generated method stub
 		int ret = FingerprintSensorErrorCode.ZKFP_ERR_OK;
+		
+		
 		// 初始化设备
-		if (FingerprintSensorErrorCode.ZKFP_ERR_OK != FingerprintSensorEx.Init()) {
+		try {
+			if (FingerprintSensorErrorCode.ZKFP_ERR_OK != FingerprintSensorEx.Init()) {
 
-			// 失败
+				// 失败
 
+			}
+			
+		} catch (UnsatisfiedLinkError e) {
+			// TODO: handle exception
+			
+			deviceInitError("没有安装对应的驱动");
+			
+			return -1;
 		}
+		
+		
 		// 获取当前连接设备的个数
 		ret = getDeviceCount();
 
@@ -134,7 +152,7 @@ public class WZKFingerServiceImpl implements WFingerService {
 	@Override
 	public boolean isOpen() {
 		// TODO Auto-generated method stub
-		return false;
+		return isDeviceConnected() && isDBConnected();
 	}
 
 	@Override
@@ -270,6 +288,12 @@ public class WZKFingerServiceImpl implements WFingerService {
 			_retLen[0] = 2048;
 			byte[] regTemp = new byte[_retLen[0]];
 
+			UserFingerDao fingerDao = new UserFingerDaoImpl();
+			
+			long nextID = fingerDao.getNextId();
+			iFid = (int)nextID;
+			//获取相应的fid，从数据库中获取，
+			//有时间可以处理一下业务，自己处理id
 			if (0 == (ret = FingerprintSensorEx.DBMerge(mhDB, regtemparray[0], regtemparray[1], regtemparray[2],
 					regTemp, _retLen)) && 0 == (ret = FingerprintSensorEx.DBAdd(mhDB, iFid, regTemp))) {
 				iFid++;
@@ -280,7 +304,7 @@ public class WZKFingerServiceImpl implements WFingerService {
 //					textArea.setText("enroll succ");
 				System.out.println("enroll succ");
 				for(WFingerServiceEnrollListener listener : enrollListeners) {
-					listener.onEnrollSuccess(iFid);
+					listener.onEnrollSuccess(iFid, null);
 				}
 			} else {
 				
@@ -381,5 +405,26 @@ public class WZKFingerServiceImpl implements WFingerService {
 	public void unregister(WFingerServiceEnrollListener listener) {
 		// TODO Auto-generated method stub
 		enrollListeners.remove(listener);
+	}
+	
+	
+	@Override
+	public void registerConnectListener(WFingerServiceLoadListener listener) {
+		// TODO Auto-generated method stub
+		loadListeners.add(listener);
+	}
+	
+	@Override
+	public void unregisterConnectListener(WFingerServiceLoadListener listener) {
+		loadListeners.remove(listener);
+		
+	}
+//
+	public void deviceInitError(String error) {
+		
+		for(WFingerServiceLoadListener listener : loadListeners) {
+			
+			listener.onFailed(error);
+		}
 	}
 }

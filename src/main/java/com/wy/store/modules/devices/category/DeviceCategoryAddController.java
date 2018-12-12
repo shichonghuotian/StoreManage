@@ -52,7 +52,7 @@ public class DeviceCategoryAddController extends BaseViewController {
 				
 				RxEventBus.getDefault().post(new RxEvent<String>(""));
 				
-				WEventBus.getDefaultEventBus().post(new Object());
+				WEventBus.getDefaultEventBus().post(new WCategoryEvent());
 			}
 			
 		}

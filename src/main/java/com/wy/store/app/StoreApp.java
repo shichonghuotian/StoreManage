@@ -1,6 +1,9 @@
 package com.wy.store.app;
 
+import java.sql.SQLException;
 import java.util.concurrent.CompletableFuture;
+
+import javax.jws.soap.SOAPBinding.Use;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,6 +16,10 @@ import org.springframework.context.annotation.ComponentScan;
 
 import com.sun.javafx.applet.Splash;
 import com.wy.store.common.finger.WFingerServiceFactory;
+import com.wy.store.db.dao.UserFingerDao;
+import com.wy.store.db.dao.impl.UserFingerDaoImpl;
+import com.wy.store.db.jdbc.StoreDB;
+import com.wy.store.domain.UserFinger;
 import com.wy.store.modules.main.MainController;
 import com.wy.wfx.core.ann.BindMainController;
 import com.wy.wfx.core.app.WFxApplication;
@@ -57,6 +64,8 @@ public class StoreApp extends WFxApplication {
 	public StoreApp() {
 		// TODO Auto-generated constructor stub
 		this.splashFuture = new CompletableFuture<>();
+		
+
 	}
 
 	public StoreSplashScreen getSplashScreen() {
@@ -138,6 +147,8 @@ public class StoreApp extends WFxApplication {
 			splashStage.setScene(null);
 
 		});
+		
+		
 
 	}
 
@@ -147,6 +158,24 @@ public class StoreApp extends WFxApplication {
 		context.close();
 		
 		WFingerServiceFactory.getFingerService().closeDevice();
+	}
+	
+	
+	public void test() {
+
+		UserFingerDao dao = new UserFingerDaoImpl();
+		
+		UserFinger finger = new UserFinger();
+		
+		finger.setFingerId(dao.getNextId());
+		
+		byte[] bs = {(byte)0xEE,(byte)0xEE};
+		finger.setFingerBlob(bs);
+//		dao.addFinger(finger);
+		
+		
+		System.out.println("next finger id = " + dao.getNextId());
+		
 	}
 
 }

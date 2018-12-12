@@ -25,6 +25,7 @@ import com.wy.store.domain.Device;
 import com.wy.store.domain.DeviceLoanInfo;
 import com.wy.store.domain.Manager;
 import com.wy.store.domain.User;
+import com.wy.store.domain.UserFinger;
 import com.wy.store.domain.UserImage;
 import com.wy.store.domain.Warehouse;
 
@@ -70,6 +71,7 @@ public class StoreDB {
 		TableUtils.createTableIfNotExists(connectionSource, Device.class);
 		TableUtils.createTableIfNotExists(connectionSource, DeviceLoanInfo.class);
 		TableUtils.createTableIfNotExists(connectionSource, Manager.class);
+		TableUtils.createTableIfNotExists(connectionSource, UserFinger.class);
 
 		System.out.println(isDBFirstLoad());
 		

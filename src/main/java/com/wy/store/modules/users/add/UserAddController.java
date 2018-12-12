@@ -9,10 +9,14 @@ import com.wy.store.common.finger.WFingerService;
 import com.wy.store.common.finger.WFingerServiceEnrollListener;
 import com.wy.store.common.finger.WFingerServiceFactory;
 import com.wy.store.common.finger.WFingerServiceListener;
+import com.wy.store.common.finger.WFingerServiceLoadListener;
 import com.wy.store.common.view.WAlert;
 import com.wy.store.db.dao.UserDao;
+import com.wy.store.db.dao.UserFingerDao;
 import com.wy.store.db.dao.impl.UserDaoImpl;
+import com.wy.store.db.dao.impl.UserFingerDaoImpl;
 import com.wy.store.domain.User;
+import com.wy.store.domain.UserFinger;
 import com.wy.wfx.core.ann.ViewController;
 import com.wy.wfx.core.controller.WFxIntent;
 
@@ -26,7 +30,7 @@ import javafx.stage.Stage;
 
 @ViewController(res = "/layout_user_add")
 @Scope("prototype") // 默认是单例
-public class UserAddController extends BaseViewController implements WFingerServiceEnrollListener {
+public class UserAddController extends BaseViewController implements WFingerServiceEnrollListener,WFingerServiceLoadListener {
 
 	@FXML
 	TextField mUserCodeTextField;
@@ -45,32 +49,51 @@ public class UserAddController extends BaseViewController implements WFingerServ
 
 	WFingerService fingerService;
 
+	UserFingerDao fingerDao;
+	
+	UserFinger currentFinger;
+	
 	@Override
 	public void onCreate(WFxIntent intent) {
 		// TODO Auto-generated method stub
 		super.onCreate(intent);
+		fingerDao = new UserFingerDaoImpl();
 		userDao = new UserDaoImpl();
 		fingerService = WFingerServiceFactory.getFingerService();
+		fingerService.registerConnectListener(this);
 		fingerService.register(this);
 
+		currentFinger = new UserFinger();
 	}
 
 	@Override
 	public void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
+		fingerService.unregisterConnectListener(this);
 		fingerService.unregister(this);
 	}
-	
+
 	@Override
-	public void onEnrollSuccess(int fingerId) {
+	public void onFailed(String s) {
+		// TODO Auto-generated method stub
+		
+		System.err.println("connect error: " + s);
+		
+	}
+	@Override
+	public void onEnrollSuccess(int fingerId, byte[] regBlob) {
 		// TODO Auto-generated method stub
 		setMsgText("指纹录入成功  id= " +fingerId);
+		
+		currentFinger.setFingerId(fingerId);
+		currentFinger.setFingerBlob(regBlob);
 		
 		Platform.runLater(() -> {
 			
 			fingerProgressBar.setProgress(1);
-
+//插入到数据库
+			
 		});
 	}
 
@@ -120,6 +143,8 @@ public class UserAddController extends BaseViewController implements WFingerServ
 		}
 	
 		fingerService.enrollFinger();
+		currentFinger = new UserFinger();
+
 
 	}
 
@@ -129,6 +154,7 @@ public class UserAddController extends BaseViewController implements WFingerServ
 		
 
 		fingerService.enrollFinger();
+		currentFinger = new UserFinger();
 
 	}
 
@@ -147,11 +173,14 @@ public class UserAddController extends BaseViewController implements WFingerServ
 			User user = new User(mUserCodeTextField.getText().trim(), mFingerTextField.getText().trim(),
 					mNameTextField.getText().trim());
 			// 检查是否重复
+			
 
 			boolean isExist = userDao.isExist(user.getUserId());
 			System.out.println("isexist = " + isExist);
 			if (!userDao.isExist(user.getUserId())) {
 
+				fingerDao.addFinger(currentFinger);
+				
 				userDao.addUser(user);
 
 				System.out.println(user);
@@ -168,10 +197,13 @@ public class UserAddController extends BaseViewController implements WFingerServ
 	}
 
 	public boolean checkForm() {
+		
+		boolean b = currentFinger.getFingerBlob() != null;
 
 		return !StringUtils.isEmpty(mUserCodeTextField.getText()) && !StringUtils.isEmpty(mNameTextField.getText())
-				&& !StringUtils.isEmpty(mFingerTextField.getText());
+				&& !StringUtils.isEmpty(mFingerTextField.getText()) && b;
 	}
+
 
 	
 

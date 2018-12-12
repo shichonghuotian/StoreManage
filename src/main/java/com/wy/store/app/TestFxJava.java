@@ -18,8 +18,10 @@ public class TestFxJava  {
 //			launch(args);
 			
 		
-		execute();
+//		execute();
 			
+		
+		
 			
 	}
 	
