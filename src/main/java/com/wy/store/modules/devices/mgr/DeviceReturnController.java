@@ -1,17 +1,15 @@
 package com.wy.store.modules.devices.mgr;
 
-import java.net.URL;
 import java.util.Date;
-import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wy.store.app.BaseViewController;
 import com.wy.store.common.Utils.DateUtils;
 import com.wy.store.common.Utils.StringUtils;
+import com.wy.store.common.eventbus.WEventBus;
 import com.wy.store.common.view.WAlert;
 import com.wy.store.db.dao.DeviceDao;
 import com.wy.store.db.dao.DeviceLoanInfoDao;
@@ -25,8 +23,11 @@ import com.wy.store.domain.User;
 import com.wy.wfx.core.ann.ViewController;
 import com.wy.wfx.core.controller.WFxIntent;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
@@ -44,7 +45,8 @@ public class DeviceReturnController extends BaseViewController {
 	TextField mDateTextField;
 	@FXML
 	TextArea mDescriptionTextArea;
-	
+	@FXML
+	Label mDeviceMsgLabel;
 	DeviceDao deviceDao;
 
 	DeviceLoanInfoDao deviceLoanInfoDao;
@@ -53,6 +55,9 @@ public class DeviceReturnController extends BaseViewController {
 	UserDao userDao;
 	
 	User currentUser;
+	
+	Device currentDevice;
+
 
 	@Override
 	public void onCreate(WFxIntent intent) {
@@ -64,6 +69,28 @@ public class DeviceReturnController extends BaseViewController {
 		deviceLoanInfoDao = new DeviceLoanInfoDaoImpl();
 		mDateTextField.setText(DateUtils.getCurrentDateString());
 		
+		mDeviceIdTextField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				// TODO Auto-generated method stub
+				if(!newValue) {
+
+					loadDevice();
+				}
+				
+			}
+		});
+		
+		mDeviceIdTextField.textProperty().addListener(new ChangeListener<String>() {
+
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				// TODO Auto-generated method stub
+				loadDevice();
+				
+			}
+		});
 	}
 	
 	/**
@@ -83,6 +110,33 @@ public class DeviceReturnController extends BaseViewController {
 		}
 		
 	}
+	
+	private void loadDevice() {
+		String deviceId = mDeviceIdTextField.getText().trim();
+
+		if(StringUtils.isEmpty(deviceId)) return;
+		//
+		currentDevice = deviceDao.getDevice(deviceId);
+		System.out.println("current device = " + currentDevice);
+		
+		if(currentDevice != null) {
+			StringBuilder builder = new StringBuilder();
+			
+			builder.append("设备编号：" + currentDevice.getDeviceId());
+			builder.append("    ");
+			builder.append("设备名称：" +currentDevice.getName() );
+			builder.append("    ");
+			builder.append("设备类别：" + currentDevice.getCategory().getParentCategory().getName() + "-" + currentDevice.getCategory().getName());
+			builder.append("    ");
+			builder.append("仓库：" + currentDevice.getWarehouse().getName());
+			mDeviceMsgLabel.setText(builder.toString());
+
+		}else {
+			mDeviceMsgLabel.setText("");
+		}
+		
+	}
+	
 	
 	public void saveAction(ActionEvent event) {
 		//检查表单
@@ -111,7 +165,8 @@ public class DeviceReturnController extends BaseViewController {
 
 					deviceLoanInfoDao.updateLoanInfo(loanInfo);
 					
-					
+					WEventBus.getDefaultEventBus().post(new WLoanReturnEvent());
+
 					WAlert.showMessageAlert("工具归还成功");
 				}else {
 					WAlert.showMessageAlert("工具没有借阅信息");

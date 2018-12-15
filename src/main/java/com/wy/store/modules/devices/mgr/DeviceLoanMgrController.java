@@ -6,11 +6,15 @@ import java.util.ResourceBundle;
 
 import org.hamcrest.SelfDescribing;
 
+import com.google.common.eventbus.Subscribe;
 import com.wy.store.app.BaseViewController;
 import com.wy.store.common.Utils.DateUtils;
+import com.wy.store.common.eventbus.WEventBus;
 import com.wy.store.db.dao.DeviceLoanInfoDao;
 import com.wy.store.db.dao.impl.DeviceLoanInfoDaoImpl;
+import com.wy.store.domain.Category;
 import com.wy.store.domain.DeviceLoanInfo;
+import com.wy.store.modules.devices.category.child.WCategoryAddEvent;
 import com.wy.wfx.core.ann.FXMLWindow;
 import com.wy.wfx.core.ann.ViewController;
 import com.wy.wfx.core.controller.WFxIntent;
@@ -45,7 +49,10 @@ public class DeviceLoanMgrController extends BaseViewController {
 	ObservableList<DeviceLoanInfo> observableList;
 
 	@Override
-	public void initialize(URL location, ResourceBundle resources) {
+	public void onCreate(WFxIntent intent) {
+		// TODO Auto-generated method stub
+		super.onCreate(intent);
+		WEventBus.getDefaultEventBus().register(this);
 
 		deviceLoanInfoDao = new DeviceLoanInfoDaoImpl();
 		
@@ -112,6 +119,28 @@ public class DeviceLoanMgrController extends BaseViewController {
 				.addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
 					beginSearch();
 				});
+	}
+	
+	@Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		WEventBus.getDefaultEventBus().unregister(this);
+
+
+	}
+
+	@Subscribe
+	public void onRefresh(WLoanReturnEvent o) {
+		List<DeviceLoanInfo> list = deviceLoanInfoDao.getAll();
+			observableList.clear();
+		observableList.addAll(list);
+	}
+	
+	
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+
 	}
 
 	public void beginSearch() {

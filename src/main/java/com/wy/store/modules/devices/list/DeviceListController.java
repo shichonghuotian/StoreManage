@@ -7,7 +7,9 @@ import java.util.ResourceBundle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.common.eventbus.Subscribe;
 import com.wy.store.app.BaseViewController;
+import com.wy.store.common.eventbus.WEventBus;
 import com.wy.store.db.dao.CategoryDao;
 import com.wy.store.db.dao.DeviceDao;
 import com.wy.store.db.dao.DeviceLoanInfoDao;
@@ -21,6 +23,7 @@ import com.wy.store.domain.Device;
 import com.wy.store.domain.DeviceLoanInfo;
 import com.wy.store.domain.Warehouse;
 import com.wy.store.modules.devices.add.DeviceAddController;
+import com.wy.store.modules.devices.category.child.WCategoryAddEvent;
 import com.wy.wfx.core.ann.FXMLWindow;
 import com.wy.wfx.core.ann.ViewController;
 import com.wy.wfx.core.controller.WFxIntent;
@@ -62,10 +65,11 @@ public class DeviceListController extends BaseViewController {
 
 	DeviceLoanInfoDao deviceLoanInfoDao;
 	
-	
 	@Override
-	public void initialize(URL location, ResourceBundle resources) {
+	public void onCreate(WFxIntent intent) {
 		// TODO Auto-generated method stub
+		super.onCreate(intent);
+		WEventBus.getDefaultEventBus().register(this);
 		deviceDao = new DeviceDaoImpl();
 		deviceLoanInfoDao = new DeviceLoanInfoDaoImpl();
 		WarhouseDao warhouseDao = new WarhouseDaoImpl();
@@ -108,7 +112,13 @@ public class DeviceListController extends BaseViewController {
 		
 
 		categoryColumn.setCellValueFactory((CellDataFeatures<Device, String> param) -> {
-			return new SimpleStringProperty(param.getValue().getCategory().getName());
+			if(param.getValue().getCategory()!=null) {
+				return new SimpleStringProperty(param.getValue().getCategory().getName());
+
+			}else {
+				return new SimpleStringProperty("");
+
+			}
 		});
 
 		warehouseColumn.setCellValueFactory((CellDataFeatures<Device, String> param) -> {
@@ -163,8 +173,24 @@ public class DeviceListController extends BaseViewController {
 				Warehouse newValue) -> {
 			beginSearch();
 		});
-
 	}
+	
+	@Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		WEventBus.getDefaultEventBus().unregister(this);
+
+		
+	}
+	
+	@Subscribe
+	public void onRefresh(WDeviceAddEvent o) {
+		beginSearch();
+	}
+	
+	
+
 
 	public void beginSearch() {
 

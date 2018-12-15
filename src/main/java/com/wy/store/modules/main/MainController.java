@@ -129,11 +129,15 @@ public class MainController extends BaseViewController {
 
 		Menu menu = new Menu("系统");
 		menuBar.getMenus().add(menu);
-		menu.getItems().add(new MenuItem("退出"));
+		MenuItem exitMenuItem =  new MenuItem("退出");
+		
+		menu.getItems().add(exitMenuItem);
 //		menu.getItems().add(new MenuItem("Save"));
 //		menu.getItems().add(new SeparatorMenuItem());
 //		menu.getItems().add(new MenuItem("Exit"));
-
+		exitMenuItem.setOnAction((ActionEvent t) -> {
+           exitAction(null);
+        });  
 
 		mVbox.getChildren().add(0, menuBar);
 //		mMenuContainerPane.getChildren().add(menuBar);

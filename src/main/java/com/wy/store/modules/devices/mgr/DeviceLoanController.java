@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import com.wy.store.app.BaseViewController;
 import com.wy.store.common.Utils.DateUtils;
 import com.wy.store.common.Utils.StringUtils;
+import com.wy.store.common.eventbus.WEventBus;
 import com.wy.store.common.finger.WFingerService;
 import com.wy.store.common.finger.WFingerServiceFactory;
 import com.wy.store.common.finger.WFingerServiceListener;
@@ -24,11 +25,17 @@ import com.wy.store.db.dao.impl.UserDaoImpl;
 import com.wy.store.domain.Device;
 import com.wy.store.domain.DeviceLoanInfo;
 import com.wy.store.domain.User;
+import com.wy.store.modules.devices.warehouse.WWarehouseAddEvent;
 import com.wy.wfx.core.ann.ViewController;
 import com.wy.wfx.core.controller.WFxIntent;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
@@ -43,7 +50,9 @@ public class DeviceLoanController extends BaseViewController implements WFingerS
 	TextField mDateTextField;
 	@FXML
 	TextArea mDescriptionTextArea;
-
+	@FXML
+	Label mDeviceMsgLabel;
+	
 	DeviceDao deviceDao;
 	UserDao userDao;
 	DeviceLoanInfoDao loanInfoDao;
@@ -51,12 +60,10 @@ public class DeviceLoanController extends BaseViewController implements WFingerS
 	User currentUser;
 	
 	WFingerService fingerService;
-
-    @PostConstruct
-	public void init() {
-		System.out.println("init");
-	}
 	
+	Device currentDevice;
+
+  
 	@Override
 	public void onCreate(WFxIntent intent) {
 		// TODO Auto-generated method stub
@@ -69,10 +76,64 @@ public class DeviceLoanController extends BaseViewController implements WFingerS
 
 		fingerService.register(this);
 		
-		System.out.println("create loan");
+		mDeviceIdTextField.focusedProperty().addListener(new ChangeListener<Boolean>() {
 
-		init();
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				// TODO Auto-generated method stub
+				if(!newValue) {
+
+					loadDevice();
+				}
+				
+			}
+		});
+		
+		mDeviceIdTextField.textProperty().addListener(new ChangeListener<String>() {
+
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				// TODO Auto-generated method stub
+				loadDevice();
+				
+			}
+		});
+		
 	}
+	@Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		fingerService.unregister(this);
+		System.out.println("destory loan");
+	} 
+	
+	private void loadDevice() {
+		String deviceId = mDeviceIdTextField.getText().trim();
+
+		if(StringUtils.isEmpty(deviceId)) return;
+		//
+		currentDevice = deviceDao.getDevice(deviceId);
+		System.out.println("current device = " + currentDevice);
+		
+		if(currentDevice != null) {
+			StringBuilder builder = new StringBuilder();
+			
+			builder.append("设备编号：" + currentDevice.getDeviceId());
+			builder.append("    ");
+			builder.append("设备名称：" +currentDevice.getName() );
+			builder.append("    ");
+			builder.append("设备类别：" + currentDevice.getCategory().getParentCategory().getName() + "-" + currentDevice.getCategory().getName());
+			builder.append("    ");
+			builder.append("仓库：" + currentDevice.getWarehouse().getName());
+			mDeviceMsgLabel.setText(builder.toString());
+
+		}else {
+			mDeviceMsgLabel.setText("");
+		}
+		
+	}
+	
 	
 	@Override
 	public void onFingerReceived(String fingerId) {
@@ -87,17 +148,6 @@ public class DeviceLoanController extends BaseViewController implements WFingerS
 			
 		}
 	}
-
-
-	@Override
-	public void onDestroy() {
-		// TODO Auto-generated method stub
-		super.onDestroy();
-		fingerService.unregister(this);
-		System.out.println("destory loan");
-	} 
-	
-	
 
 	
 	public void saveAction(ActionEvent event) {
@@ -128,6 +178,8 @@ public class DeviceLoanController extends BaseViewController implements WFingerS
 				
 				if(!loanInfoDao.isLoaned(device)) {
 					loanInfoDao.addLoanInfo(loanInfo);
+
+					WEventBus.getDefaultEventBus().post(new WLoanReturnEvent());
 
 					WAlert.showMessageAlert("借出成功");
 

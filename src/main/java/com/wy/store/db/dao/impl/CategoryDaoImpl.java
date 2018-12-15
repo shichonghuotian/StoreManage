@@ -14,6 +14,7 @@ import com.j256.ormlite.stmt.Where;
 import com.wy.store.db.dao.CategoryDao;
 import com.wy.store.db.jdbc.StoreDB;
 import com.wy.store.domain.Category;
+import com.wy.store.domain.User;
 
 @Component
 public class CategoryDaoImpl implements CategoryDao{
@@ -76,6 +77,28 @@ public class CategoryDaoImpl implements CategoryDao{
 			return false;	
 			
 	}
+	
+	@Override
+	public List<Category> getCategoryList(long parentId) {
+		
+		List<Category> list = new ArrayList<>();
+		
+		try {
+
+//			mDao.queryBuilder().where().like("LastName", "A%").query()
+			list = dao.queryBuilder().where().eq("parentCategory_id", parentId).query();
+		
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	
+		
+		return list;
+		
+	}
+
 
 	public Category getCategory(String name) {
 		

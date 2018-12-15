@@ -42,7 +42,8 @@ public class DeviceCategoryListController extends BaseViewController{
 	public void onCreate(WFxIntent intent) {
 		// TODO Auto-generated method stub
 		super.onCreate(intent);
-		
+		WEventBus.getDefaultEventBus().register(this);
+
 		mCategoryDao = new CategoryDaoImpl();
 		
 		List<Category> list = mCategoryDao.getAll();
@@ -75,7 +76,6 @@ public class DeviceCategoryListController extends BaseViewController{
 
 
 		
-		WEventBus.getDefaultEventBus().register(this);
 		
 	}
 	

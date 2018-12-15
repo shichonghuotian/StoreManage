@@ -12,7 +12,7 @@ public interface CategoryDao {
 	public Category getCategoryByCode(long parentId,String code);
 	
 	public Category getCategory(long parentId,String name);
-
+	public List<Category> getCategoryList(long parentId);
 
 	public boolean delete(Category category);
 

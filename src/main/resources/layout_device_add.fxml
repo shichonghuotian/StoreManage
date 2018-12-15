@@ -5,8 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane  prefHeight="581.0" prefWidth="847.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
->
+<AnchorPane prefHeight="313.0" prefWidth="530.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <GridPane layoutX="6.0" layoutY="7.0" prefHeight="211.0" prefWidth="479.0">
         <columnConstraints>
@@ -26,8 +25,13 @@
             <Label text="仓库" GridPane.rowIndex="3" />
             <TextField fx:id="mCodeTextField" GridPane.columnIndex="1" />
             <TextField fx:id="mNameTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <ComboBox fx:id="mCategoryComboBox" prefHeight="27.0" prefWidth="328.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <ComboBox fx:id="mWarehouseComboBox" prefHeight="27.0" prefWidth="326.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Pane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <children>
+                  <ComboBox fx:id="mParentCategoryComboBox" layoutY="13.0" prefWidth="150.0" />
+                  <ComboBox fx:id="mCategoryComboBox" layoutX="163.0" layoutY="13.0" prefWidth="150.0" />
+               </children>
+            </Pane>
          </children>
       </GridPane>
       <Button layoutX="418.0" layoutY="260.0" mnemonicParsing="false" onAction="#saveAction" text="保存" />
