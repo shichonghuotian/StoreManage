@@ -2,14 +2,16 @@ package com.wy.store.modules.users.list;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
+import com.google.common.eventbus.Subscribe;
 import com.wy.store.app.BaseViewController;
+import com.wy.store.common.eventbus.WEventBus;
 import com.wy.store.common.view.WAlert;
 import com.wy.store.db.dao.UserDao;
 import com.wy.store.db.dao.impl.UserDaoImpl;
 import com.wy.store.domain.User;
-import com.wy.store.modules.devices.add.DeviceAddController;
 import com.wy.store.modules.users.add.UserAddController;
 import com.wy.wfx.core.ann.FXMLWindow;
 import com.wy.wfx.core.ann.ViewController;
@@ -22,18 +24,20 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Window;
-@ViewController(res="/layout_user_info.fxml")
+
+@ViewController(res = "/layout_user_info.fxml")
 public class UserListController extends BaseViewController {
 
 	@FXMLWindow
 	Window window;
-	
+
 	@FXML
 	TableView<User> mTableView;
 
@@ -53,6 +57,7 @@ public class UserListController extends BaseViewController {
 
 	UserDao mUserDao;
 
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		// TODO Auto-generated method stub
@@ -74,7 +79,6 @@ public class UserListController extends BaseViewController {
 		userCodeColumn.setCellValueFactory(new PropertyValueFactory<>("userId"));
 		nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 		fingerColumn.setCellValueFactory(new PropertyValueFactory<>("fingerId"));
-
 
 		mTableView.getColumns().addAll(idColumn, userCodeColumn, nameColumn, fingerColumn);
 
@@ -105,20 +109,33 @@ public class UserListController extends BaseViewController {
 
 		mSearchComboBox.getSelectionModel().select(0);
 
-	
+		WEventBus.getDefaultEventBus().register(this);
+
 	}
-	
+
+	@Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		WEventBus.getDefaultEventBus().unregister(this);
+
+	}
+
+	@Subscribe
+	public void onRefresh(WUserAddEvent o) {
+		List<User> list = mUserDao.getAllUser();
+
+		observableList.clear();
+		observableList.addAll(list);
+	}
 
 	public void addAction(ActionEvent event) {
 
-		System.out.println("add");
-		
-//		
-		
 		try {
 			this.presentController(new WFxIntent(UserAddController.class));
 
-//			FxViewHander.showControllerInWindow(UserAddController.class, window);
+			// FxViewHander.showControllerInWindow(UserAddController.class,
+			// window);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -126,21 +143,36 @@ public class UserListController extends BaseViewController {
 	}
 
 	public void deleteAction(ActionEvent event) {
-		
-		//获取选中的行数
-	  User user =	mTableView.getSelectionModel().getSelectedItem();
+
+		// 获取选中的行数
+		User user = mTableView.getSelectionModel().getSelectedItem();
 		System.out.println("select user " + user);
 
-		//
-		new WAlert.Builder().message("确定删除"+user.getName() + "吗？").create().show();
-	  
-		//还是需要添加事件的
+		//需要查看是否有借出记录
+
+		boolean t = false;
+		if (t) {
+			WAlert.showMessageAlert("当前管理员已经登陆，请退出重新登陆后删除");
+
+		} else {
+			Optional<ButtonType> result = WAlert.showConfirmationMessageAlert("确定删除" + user.getName() + "吗？");
+
+			if (result.get() == ButtonType.OK) {
+				
+				
+				mUserDao.deleteUser(user);
+
+				observableList.remove(user);
+			}
+		}
+
+		// 还是需要添加事件的
 	}
 
 	public void editAction(ActionEvent event) {
 		System.out.println("edit");
 
-		//确定编辑这个用户吗
+		// 确定编辑这个用户吗
 	}
 
 }

@@ -2,13 +2,17 @@ package com.wy.store.modules.devices.warehouse;
 
 import java.util.List;
 
+import com.google.common.eventbus.Subscribe;
 import com.wy.store.app.BaseViewController;
+import com.wy.store.common.eventbus.WEventBus;
 import com.wy.store.db.dao.CategoryDao;
 import com.wy.store.db.dao.WarhouseDao;
 import com.wy.store.db.dao.impl.WarhouseDaoImpl;
 import com.wy.store.domain.Category;
+import com.wy.store.domain.User;
 import com.wy.store.domain.Warehouse;
-import com.wy.store.modules.devices.category.DeviceCategoryAddController;
+import com.wy.store.modules.devices.category.child.DeviceCategoryAddController;
+import com.wy.store.modules.users.list.WUserAddEvent;
 import com.wy.wfx.core.ann.ViewController;
 import com.wy.wfx.core.controller.WFxIntent;
 
@@ -45,6 +49,25 @@ public class WarehouseListController extends BaseViewController{
 		
 		mTableView.setItems(observableList);
 
+
+		WEventBus.getDefaultEventBus().register(this);
+
+	}
+
+	@Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		WEventBus.getDefaultEventBus().unregister(this);
+
+	}
+
+	@Subscribe
+	public void onRefresh(WWarehouseAddEvent o) {
+		List<Warehouse> list = mWarhouseDao.getAll();
+
+		observableList.clear();
+		observableList.addAll(list);
 	}
 	
 
@@ -65,15 +88,7 @@ public class WarehouseListController extends BaseViewController{
 		  
 		  observableList.remove(warehouse);
 		  
-		// 获取选中的行数
-		// User user = mTableView.getSelectionModel().getSelectedItem();
-		// System.out.println("select user " + user);
-
-		//
-		// new WAlert.Builder().message("确定删除"+user.getName() +
-		// "吗？").create().show();
-
-		// 还是需要添加事件的
+	
 	}
 
 

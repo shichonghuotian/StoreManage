@@ -71,13 +71,11 @@ public class DeviceAddController extends BaseViewController{
 
 			//检查是否重复
 			
-			
-			
 			if(!deviceDao.isExist(device.getDeviceId())) {
 				
 				deviceDao.add(device);
 				
-				System.out.println(device);
+//				System.out.println(device);
 				WAlert.showMessageAlert("设备添加成功");
 
 			}else {

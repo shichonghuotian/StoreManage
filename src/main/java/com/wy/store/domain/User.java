@@ -16,7 +16,7 @@ public class User {
 	private String userId;
 	//指纹识别号
 	@DatabaseField(unique = true,columnName = "finger_id")
-	private String fingerId;
+	private long fingerId;
 	
 	//用户名
 	@DatabaseField
@@ -35,14 +35,26 @@ public class User {
 		// TODO Auto-generated constructor stub
 	}
 
-	public User( String userId, String fingerId, String name) {
+	
+	
+	
+	public User(String userId, String name) {
+		super();
+		this.userId = userId;
+		this.name = name;
+	}
+
+
+
+
+	public User( String userId, long fingerId, String name) {
 		super();
 		this.userId = userId;
 		this.fingerId = fingerId;
 		this.name = name;
 	}
 
-	public User( String userId, String fingerId, String name, String password) {
+	public User( String userId, long fingerId, String name, String password) {
 		super();
 		this.userId = userId;
 		this.fingerId = fingerId;
@@ -66,11 +78,11 @@ public class User {
 		this.userId = userId;
 	}
 
-	public String getFingerId() {
+	public long getFingerId() {
 		return fingerId;
 	}
 
-	public void setFingerId(String fingerId) {
+	public void setFingerId(long fingerId) {
 		this.fingerId = fingerId;
 	}
 

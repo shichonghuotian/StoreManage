@@ -121,5 +121,17 @@ public class UserFingerDaoImpl implements UserFingerDao{
 		return 1;
 	}
 
+	@Override
+	public boolean delete(UserFinger finger) {
+		// TODO Auto-generated method stub
+		try {
+			dao.delete(finger);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 	
 }

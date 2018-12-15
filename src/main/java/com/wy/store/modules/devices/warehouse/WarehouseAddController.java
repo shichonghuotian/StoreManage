@@ -2,6 +2,7 @@ package com.wy.store.modules.devices.warehouse;
 
 import com.wy.store.app.BaseViewController;
 import com.wy.store.common.Utils.StringUtils;
+import com.wy.store.common.eventbus.WEventBus;
 import com.wy.store.common.view.WAlert;
 import com.wy.store.db.dao.WarhouseDao;
 import com.wy.store.db.dao.impl.WarhouseDaoImpl;
@@ -35,14 +36,17 @@ public class WarehouseAddController extends BaseViewController{
 //			if(mCategoryDao.fi)
 			if(mWarehouseDao.isExist(string)) {
 				
-				WAlert.showMessageAlert("类别已经存在");
+				WAlert.showMessageAlert("数据库已经存在");
 			}else {
 				Warehouse warehouse = new Warehouse(string);
 
 				mWarehouseDao.add(warehouse);
+				WEventBus.getDefaultEventBus().post(new WWarehouseAddEvent());
+
 				WAlert.showMessageAlert("添加成功");
 
 				mNameTextField.setText("");
+				
 			}
 			
 		}

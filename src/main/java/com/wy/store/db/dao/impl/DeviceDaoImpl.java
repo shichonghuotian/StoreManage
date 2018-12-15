@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.wy.store.db.dao.DeviceDao;
@@ -65,20 +66,21 @@ public class DeviceDaoImpl implements DeviceDao {
 
 	@Override
 	public Device getDevice(String deviceId) {
-		// TODO Auto-generated method stub
-		List<Device> devices = null;
+	
+		
 		try {
-			devices = dao.queryForEq("deviceId", deviceId);
+            QueryBuilder<Device, Long> builder =    dao.queryBuilder();
+            Where<Device, Long> where = builder.where();
+            where.eq("deviceId", deviceId);
+            
+            PreparedQuery<Device> preparedQuery = builder.prepare();
+
+			return dao.queryForFirst(preparedQuery);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		if (devices != null && devices.size() > 0) {
-
-			return devices.get(0);
-		}
-
+		
 		return null;
 
 	}

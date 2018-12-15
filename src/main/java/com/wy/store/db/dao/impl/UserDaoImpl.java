@@ -10,9 +10,15 @@ import org.springframework.stereotype.Repository;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 import com.wy.store.db.dao.UserDao;
+import com.wy.store.db.dao.UserFingerDao;
 import com.wy.store.db.jdbc.StoreDB;
+import com.wy.store.domain.Device;
 import com.wy.store.domain.User;
+import com.wy.store.domain.UserFinger;
 
 @Component
 public class UserDaoImpl implements UserDao{
@@ -63,18 +69,17 @@ public class UserDaoImpl implements UserDao{
 	}
 
 	public User getUser(String userId) {
-		
-		List<User> users = null;
 		try {
-			users = dao.queryForEq("u_id", userId);
+            QueryBuilder<User, Long> builder =    dao.queryBuilder();
+            Where<User, Long> where = builder.where();
+            where.eq("u_id", userId);
+            
+            PreparedQuery<User> preparedQuery = builder.prepare();
+
+			return dao.queryForFirst(preparedQuery);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-
-		if (users != null && users.size() > 0) {
-
-			return users.get(0);
 		}
 		
 		return null;
@@ -138,5 +143,24 @@ public class UserDaoImpl implements UserDao{
 		}
 		
 		return null;
+	}
+
+	@Override
+	public boolean deleteUser(User user) {
+		// TODO Auto-generated method stub
+		try {
+			UserFingerDao userFingerDao = new UserFingerDaoImpl();
+			
+			UserFinger userFinger = userFingerDao.getUserFinger(user.getFingerId());
+			if(userFinger!=null) {
+				userFingerDao.delete(userFinger);
+			}
+			
+			dao.delete(user);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
 	}
 }

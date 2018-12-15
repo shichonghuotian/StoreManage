@@ -117,8 +117,7 @@ public abstract class WFxViewController implements Initializable{
 			stage.initOwner(this.keyWindow);
 		}
 
-		controller.setView(viewContext.getRootNode());
-		controller.onCreate(intent);
+//		stage.setAlwaysOnTop(true);
 
 		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			
@@ -129,9 +128,11 @@ public abstract class WFxViewController implements Initializable{
 
 			}
 		});
-		
-		System.out.println(" stage " + stage);
+		controller.setView(viewContext.getRootNode());
 
+		controller.onCreate(intent);
+
+		
 		// //会阻塞下面的代码
 		stage.showAndWait();
 		
@@ -142,9 +143,6 @@ public abstract class WFxViewController implements Initializable{
 	public void dismissController() {
 		if(getKeyWindow() != null) {
 			Stage stage = (Stage)getKeyWindow();
-			System.out.println(" dismissController " + stage);
-
-			
 			stage.close();
 
 			stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST

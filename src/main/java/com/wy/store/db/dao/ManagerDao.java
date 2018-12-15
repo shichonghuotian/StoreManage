@@ -13,6 +13,7 @@ public interface ManagerDao {
 	
 	public Manager getManager(String name);
 
+	public boolean delete(Manager manager);
 
 	public boolean isExist(String name);
 

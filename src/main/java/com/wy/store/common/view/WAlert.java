@@ -1,6 +1,9 @@
 package com.wy.store.common.view;
 
+import com.google.common.base.Optional;
+
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 
 public class WAlert extends Alert{
 
@@ -54,13 +57,23 @@ public class WAlert extends Alert{
 			
 		}
 	}
+
 	
-	
-	public static void showMessageAlert(String message) {
+	public static java.util.Optional<ButtonType> showMessageAlert(String message) {
 		
-		new WAlert.Builder().message(message).create().show();
+	
+		return  new WAlert.Builder().message(message).create().showAndWait();
 
 	}
+	
+	public static java.util.Optional<ButtonType> showConfirmationMessageAlert(String message) {
+		
+		
+		return  new WAlert.Builder().message(message).alertType(AlertType.CONFIRMATION).create().showAndWait();
+
+	}
+	
+	
 	
 	
 }

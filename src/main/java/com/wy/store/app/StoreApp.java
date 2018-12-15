@@ -16,9 +16,11 @@ import org.springframework.context.annotation.ComponentScan;
 
 import com.sun.javafx.applet.Splash;
 import com.wy.store.common.finger.WFingerServiceFactory;
+import com.wy.store.db.dao.ManagerDao;
 import com.wy.store.db.dao.UserFingerDao;
 import com.wy.store.db.dao.impl.UserFingerDaoImpl;
 import com.wy.store.db.jdbc.StoreDB;
+import com.wy.store.domain.Manager;
 import com.wy.store.domain.UserFinger;
 import com.wy.store.modules.main.MainController;
 import com.wy.wfx.core.ann.BindMainController;
@@ -55,6 +57,9 @@ public class StoreApp extends WFxApplication {
 	private static String[] savedArgs = new String[0];
 	protected ConfigurableApplicationContext context;
 
+	
+	public static Manager currentManager;
+	
 	public static void main(String[] args) {
 
 
@@ -66,6 +71,12 @@ public class StoreApp extends WFxApplication {
 		this.splashFuture = new CompletableFuture<>();
 		
 
+//		try {
+//			StoreDB.createTable();
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 
 	public StoreSplashScreen getSplashScreen() {
@@ -85,9 +96,14 @@ public class StoreApp extends WFxApplication {
 
 	// 注意处理一下spring初始化的问题
 	private ConfigurableApplicationContext loadSpring() {
-		context = SpringApplication.run(getClass(), savedArgs);
-		context.getAutowireCapableBeanFactory().autowireBean(this);
-
+//		context = SpringApplication.run(getClass(), savedArgs);
+//		context.getAutowireCapableBeanFactory().autowireBean(this);
+		try {
+			Thread.sleep(1000);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return context;
 	}
 
@@ -99,6 +115,8 @@ public class StoreApp extends WFxApplication {
 
 		CompletableFuture.supplyAsync(() -> {
 
+		
+			
 			return loadSpring();
 		}).whenComplete((ctx, throwable) -> {
 			if (throwable != null) {
@@ -135,16 +153,21 @@ public class StoreApp extends WFxApplication {
 
 		splashFuture.complete(() -> {
 			System.out.println("start main");
-
+			
 			try {
+				
 				super.start(primaryStage);
+//				stage.setIconified(true);
+//				Platform.setImplicitExit(false)
+				//禁止关闭
+				splashStage.hide();
+				splashStage.setScene(null);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
-			splashStage.hide();
-			splashStage.setScene(null);
+			
+			
 
 		});
 		
@@ -155,9 +178,13 @@ public class StoreApp extends WFxApplication {
 	@Override
 	public void stop() throws Exception {
 		super.stop();
-		context.close();
-		
-		WFingerServiceFactory.getFingerService().closeDevice();
+//		context.close();
+		try {
+			WFingerServiceFactory.getFingerService().closeDevice();
+
+		} catch (Error e) {
+			// TODO: handle exception
+		}
 	}
 	
 	

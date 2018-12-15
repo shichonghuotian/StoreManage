@@ -25,5 +25,6 @@ public interface UserDao {
 	public List<User> getUserListLikeUserId(String likeUserId);
 	public List<User> getUserListLikeUserName(String likeUserName);
 
+	public boolean deleteUser(User user);
 
 }

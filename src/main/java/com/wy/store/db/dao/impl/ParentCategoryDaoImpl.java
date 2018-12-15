@@ -4,29 +4,27 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.stereotype.Component;
-
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
-import com.wy.store.db.dao.CategoryDao;
+import com.wy.store.db.dao.ParentCategoryDao;
 import com.wy.store.db.jdbc.StoreDB;
 import com.wy.store.domain.Category;
+import com.wy.store.domain.ParentCategory;
+import com.wy.store.domain.UserFinger;
 
-@Component
-public class CategoryDaoImpl implements CategoryDao{
+public class ParentCategoryDaoImpl implements ParentCategoryDao{
 
-	
-	Dao<Category, Long> dao;
+	Dao<ParentCategory, Long> dao;
 
 
-	public CategoryDaoImpl() {
+	public ParentCategoryDaoImpl() {
 		// TODO Auto-generated constructor stub
 		
 		try {
-			dao = DaoManager.createDao(StoreDB.getConnectionSource(), Category.class);
+			dao = DaoManager.createDao(StoreDB.getConnectionSource(), ParentCategory.class);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -35,7 +33,7 @@ public class CategoryDaoImpl implements CategoryDao{
 
 
 	@Override
-	public boolean add(Category category) {
+	public boolean add(ParentCategory category) {
 		// TODO Auto-generated method stub
 		int b = 0;
 		try {
@@ -49,7 +47,7 @@ public class CategoryDaoImpl implements CategoryDao{
 
 
 	@Override
-	public List<Category> getAll() {
+	public List<ParentCategory> getAll() {
 		// TODO Auto-generated method stub
 
 		try {
@@ -65,7 +63,7 @@ public class CategoryDaoImpl implements CategoryDao{
 
 
 	@Override
-	public boolean addList(List<Category> list) {
+	public boolean addList(List<ParentCategory> list) {
 		try {
 			  return	dao.create(list) == 1;
 			} catch (SQLException e) {
@@ -77,14 +75,13 @@ public class CategoryDaoImpl implements CategoryDao{
 			
 	}
 
-	public Category getCategory(String name) {
-		
+	public ParentCategory getCategory(String name) {
 		try {
-            QueryBuilder<Category, Long> builder =    dao.queryBuilder();
-            Where<Category, Long> where = builder.where();
+            QueryBuilder<ParentCategory, Long> builder =    dao.queryBuilder();
+            Where<ParentCategory, Long> where = builder.where();
             where.eq("name", name);
             
-            PreparedQuery<Category> preparedQuery = builder.prepare();
+            PreparedQuery<ParentCategory> preparedQuery = builder.prepare();
 
 			return dao.queryForFirst(preparedQuery);
 		} catch (SQLException e) {
@@ -94,35 +91,15 @@ public class CategoryDaoImpl implements CategoryDao{
 		
 		return null;
 	}
-
+	
 	@Override
-	public Category getCategory(long parentId,String name) {
-		
+	public ParentCategory getCategoryByCode(String code) {
 		try {
-            QueryBuilder<Category, Long> builder =    dao.queryBuilder();
-            Where<Category, Long> where = builder.where();
-            where.eq("parentCategory_id", parentId).and().eq("name", name);
+            QueryBuilder<ParentCategory, Long> builder =    dao.queryBuilder();
+            Where<ParentCategory, Long> where = builder.where();
+            where.eq("code", code);
             
-            PreparedQuery<Category> preparedQuery = builder.prepare();
-
-			return dao.queryForFirst(preparedQuery);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return null;
-	}
-
-	@Override
-	public Category getCategoryByCode(long parentId,String code) {
-		
-		try {
-            QueryBuilder<Category, Long> builder =    dao.queryBuilder();
-            Where<Category, Long> where = builder.where();
-            where.eq("parentCategory_id", parentId).and().eq("code", code);
-            
-            PreparedQuery<Category> preparedQuery = builder.prepare();
+            PreparedQuery<ParentCategory> preparedQuery = builder.prepare();
 
 			return dao.queryForFirst(preparedQuery);
 		} catch (SQLException e) {
@@ -136,15 +113,20 @@ public class CategoryDaoImpl implements CategoryDao{
 	@Override
 	public boolean isExist(String name) {
 		// TODO Auto-generated method stub
-		Category category = getCategory(name);
+		ParentCategory category = getCategory(name);
+		return category != null;
+		
+	}
+	@Override
+	public boolean isExistOfCode(String code) {
+		// TODO Auto-generated method stub
+		ParentCategory category = getCategoryByCode(code);
 		return category != null;
 		
 	}
 
-	
-
 	@Override
-	public boolean delete(Category category) {
+	public boolean delete(ParentCategory category) {
 		// TODO Auto-generated method stub
 		try {
 			dao.delete(category);
@@ -155,6 +137,4 @@ public class CategoryDaoImpl implements CategoryDao{
 		return true;
 	}
 
-
-	
 }

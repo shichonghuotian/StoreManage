@@ -12,7 +12,7 @@ public interface UserFingerDao {
 	
 	public UserFinger  getUserFinger(long id);
 	
-	
+	public boolean delete(UserFinger finger);
 	public long getNextId();
 	
 

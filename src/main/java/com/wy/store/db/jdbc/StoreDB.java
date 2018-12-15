@@ -24,6 +24,7 @@ import com.wy.store.domain.Category;
 import com.wy.store.domain.Device;
 import com.wy.store.domain.DeviceLoanInfo;
 import com.wy.store.domain.Manager;
+import com.wy.store.domain.ParentCategory;
 import com.wy.store.domain.User;
 import com.wy.store.domain.UserFinger;
 import com.wy.store.domain.UserImage;
@@ -58,14 +59,18 @@ public class StoreDB {
 	
 	public static void createTable() throws SQLException {
 		
-		
-
 		ConnectionSource connectionSource  = getConnectionSource();
+
+
+//		TableUtils.dropTable(connectionSource, Category.class,true);
+//		TableUtils.dropTable(connectionSource, ParentCategory.class,true);
+		
 		TableUtils.createTableIfNotExists(connectionSource, User.class);
 		TableUtils.createTableIfNotExists(connectionSource, UserImage.class);
 
 		
 		TableUtils.createTableIfNotExists(connectionSource, Category.class);
+		TableUtils.createTableIfNotExists(connectionSource, ParentCategory.class);
 
 		TableUtils.createTableIfNotExists(connectionSource, Warehouse.class);
 		TableUtils.createTableIfNotExists(connectionSource, Device.class);

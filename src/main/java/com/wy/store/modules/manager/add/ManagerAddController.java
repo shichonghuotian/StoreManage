@@ -2,10 +2,13 @@ package com.wy.store.modules.manager.add;
 
 import com.wy.store.app.BaseViewController;
 import com.wy.store.common.Utils.StringUtils;
+import com.wy.store.common.eventbus.WEventBus;
 import com.wy.store.common.view.WAlert;
 import com.wy.store.db.dao.ManagerDao;
 import com.wy.store.db.dao.impl.ManagerDaoImpl;
 import com.wy.store.domain.Manager;
+import com.wy.store.modules.devices.category.child.WCategoryAddEvent;
+import com.wy.store.modules.manager.list.WManagerAddEvent;
 import com.wy.wfx.core.ann.ViewController;
 import com.wy.wfx.core.controller.WFxIntent;
 
@@ -56,7 +59,8 @@ public class ManagerAddController extends BaseViewController{
 			if(!managerDao.isExist(manager.getName())) {
 				
 				managerDao.addMagager(manager);
-				
+				WEventBus.getDefaultEventBus().post(new WManagerAddEvent());
+
 				WAlert.showMessageAlert("添加成功");
 
 			}else {

@@ -5,13 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 import com.wy.store.db.dao.WarhouseDao;
 import com.wy.store.db.jdbc.StoreDB;
-import com.wy.store.domain.Category;
 import com.wy.store.domain.Warehouse;
 
 @Component
@@ -73,18 +74,18 @@ public class WarhouseDaoImpl implements WarhouseDao {
 	}
 
 	public Warehouse getWarehouse(String name) {
-
-		List<Warehouse> warehouses = null;
+		
 		try {
-			warehouses = dao.queryForEq("name", name);
+            QueryBuilder<Warehouse, Long> builder =    dao.queryBuilder();
+            Where<Warehouse, Long> where = builder.where();
+            where.eq("name", name);
+            
+            PreparedQuery<Warehouse> preparedQuery = builder.prepare();
+
+			return dao.queryForFirst(preparedQuery);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-
-		if (warehouses != null && warehouses.size() > 0) {
-
-			return warehouses.get(0);
 		}
 
 		return null;

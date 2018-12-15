@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="220.0" prefWidth="446.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+         <TextField fx:id="mCodeTextField" layoutX="99.0" layoutY="22.0" prefHeight="29.0" prefWidth="287.0" />
+   
+    <TextField fx:id="mNameTextField" layoutX="99.0" layoutY="82.0" prefHeight="29.0" prefWidth="287.0" />
+           
+      
+      <Button layoutX="350.0" layoutY="150.0" mnemonicParsing="false" onAction="#saveAction" text="保存" />
+      <Button layoutX="284.0" layoutY="150.0" mnemonicParsing="false" onAction="#cancelAction" text="取消" />
+     
+      <Label layoutX="20.0" layoutY="88.0" text="类别名称:" />
+      <Label layoutX="20.0" layoutY="28.0" text="类别编号:" />
+      <Label fx:id="mTipLabel" layoutX="99.0" layoutY="124.0" prefHeight="17.0" prefWidth="287.0" textFill="#e80505" />
+   </children>
+</AnchorPane>

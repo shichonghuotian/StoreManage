@@ -73,4 +73,16 @@ public class ManagerDaoImpl implements ManagerDao{
 		return getManager(name) != null;
 	}
 
+	@Override
+	public boolean delete(Manager manager) {
+		// TODO Auto-generated method stub
+		try {
+			dao.delete(manager);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return true;
+	}
+
 }

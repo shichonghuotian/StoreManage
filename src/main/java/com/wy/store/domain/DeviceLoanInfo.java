@@ -26,7 +26,7 @@ public class DeviceLoanInfo {
 
 	//管理员或经受人 -- out person
 	@DatabaseField(foreign=true,foreignAutoRefresh=true)
-	private User master;
+	private Manager master;
 	
 	//借出时间
 	@DatabaseField
@@ -44,7 +44,7 @@ public class DeviceLoanInfo {
 	@DatabaseField
 	private String description;
 
-	public DeviceLoanInfo(Device device, User takeUser, User returnUser, User master, Date loanDate, Date returnDate,
+	public DeviceLoanInfo(Device device, User takeUser, User returnUser, Manager master, Date loanDate, Date returnDate,
 			String description) {
 		super();
 		this.device = device;
@@ -84,11 +84,11 @@ public class DeviceLoanInfo {
 		this.returnUser = returnUser;
 	}
 
-	public User getMaster() {
+	public Manager getMaster() {
 		return master;
 	}
 
-	public void setMaster(User master) {
+	public void setMaster(Manager master) {
 		this.master = master;
 	}
 

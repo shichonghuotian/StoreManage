@@ -9,6 +9,11 @@ public interface CategoryDao {
 	
 	public boolean add(Category category);
 	public boolean isExist(String name);
+	public Category getCategoryByCode(long parentId,String code);
+	
+	public Category getCategory(long parentId,String name);
+
+
 	public boolean delete(Category category);
 
 	public List<Category> getAll();

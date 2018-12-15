@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Scope;
 
 import com.wy.store.app.BaseViewController;
 import com.wy.store.common.Utils.StringUtils;
+import com.wy.store.common.eventbus.WEventBus;
 import com.wy.store.common.finger.WFingerService;
 import com.wy.store.common.finger.WFingerServiceEnrollListener;
 import com.wy.store.common.finger.WFingerServiceFactory;
@@ -17,6 +18,7 @@ import com.wy.store.db.dao.impl.UserDaoImpl;
 import com.wy.store.db.dao.impl.UserFingerDaoImpl;
 import com.wy.store.domain.User;
 import com.wy.store.domain.UserFinger;
+import com.wy.store.modules.users.list.WUserAddEvent;
 import com.wy.wfx.core.ann.ViewController;
 import com.wy.wfx.core.controller.WFxIntent;
 
@@ -36,8 +38,6 @@ public class UserAddController extends BaseViewController implements WFingerServ
 	TextField mUserCodeTextField;
 	@FXML
 	TextField mNameTextField;
-	@FXML
-	TextField mFingerTextField;
 
 	@FXML
 	ProgressBar fingerProgressBar;
@@ -170,7 +170,7 @@ public class UserAddController extends BaseViewController implements WFingerServ
 
 		if (checkForm()) {
 
-			User user = new User(mUserCodeTextField.getText().trim(), mFingerTextField.getText().trim(),
+			User user = new User(mUserCodeTextField.getText().trim(),
 					mNameTextField.getText().trim());
 			// 检查是否重复
 			
@@ -183,7 +183,9 @@ public class UserAddController extends BaseViewController implements WFingerServ
 				
 				userDao.addUser(user);
 
-				System.out.println(user);
+				WEventBus.getDefaultEventBus().post(new WUserAddEvent());;
+
+				
 				WAlert.showMessageAlert("用户添加成功");
 
 			} else {
@@ -201,7 +203,7 @@ public class UserAddController extends BaseViewController implements WFingerServ
 		boolean b = currentFinger.getFingerBlob() != null;
 
 		return !StringUtils.isEmpty(mUserCodeTextField.getText()) && !StringUtils.isEmpty(mNameTextField.getText())
-				&& !StringUtils.isEmpty(mFingerTextField.getText()) && b;
+				 && b;
 	}
 
 

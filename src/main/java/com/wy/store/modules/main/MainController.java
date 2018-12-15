@@ -2,13 +2,18 @@ package com.wy.store.modules.main;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wy.store.app.BaseViewController;
+import com.wy.store.app.StoreApp;
+import com.wy.store.common.view.WAlert;
 import com.wy.store.db.dao.UserDao;
 import com.wy.store.db.dao.impl.UserDaoImpl;
-import com.wy.store.modules.devices.category.DeviceCategoryListController;
+import com.wy.store.modules.devices.category.child.DeviceCategoryListController;
+import com.wy.store.modules.devices.category.parent.DeviceParentCategoryAddController;
+import com.wy.store.modules.devices.category.parent.DeviceParentCategoryListController;
 import com.wy.store.modules.devices.list.DeviceListController;
 import com.wy.store.modules.devices.mgr.DeviceLoanMgrController;
 import com.wy.store.modules.devices.warehouse.WarehouseListController;
@@ -27,6 +32,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
@@ -47,6 +54,8 @@ public class MainController extends BaseViewController {
 	@FXML
 	Pane mContainerPane;
 
+	@FXML
+	Label mMgrInfoLabel;
 //	@FXML
 //	Pane mMenuContainerPane;
 
@@ -68,31 +77,29 @@ public class MainController extends BaseViewController {
 		// TODO Auto-generated method stub
 		super.onCreate(intent);
 
-		userDao = new UserDaoImpl();
-		
-		System.out.println("userdao " + userDao);
 		try {
-			// FxViewHander.showControllerInWindow(LoginController.class,
-			// window);
-
-			WFxViewHander.showControllerInWindow(LoginController.class, window);
-
+			presentController(new WFxIntent(LoginController.class));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		userDao = new UserDaoImpl();
+		
+		
 
 		mMenuItemList = new ArrayList<>();
-		mMenuItemList.add(new MainMenuItem("Category", ManagerListController.class));
+//		mMenuItemList.add(new MainMenuItem("管理员", ManagerListController.class));
 
 		mMenuItemList.add(new MainMenuItem("用户管理", UserListController.class));
 		mMenuItemList.add(new MainMenuItem("设备管理", DeviceListController.class));
+		mMenuItemList.add(new MainMenuItem(" 	总类别", DeviceParentCategoryListController.class));
+		mMenuItemList.add(new MainMenuItem(" 	子类别", DeviceCategoryListController.class));
+
+		mMenuItemList.add(new MainMenuItem(" 	仓库", WarehouseListController.class));
+
 		mMenuItemList.add(new MainMenuItem("借还管理", DeviceLoanMgrController.class));
 
-		mMenuItemList.add(new MainMenuItem("Category", DeviceCategoryListController.class));
-
-		mMenuItemList.add(new MainMenuItem("仓库", WarehouseListController.class));
-
+		
 		ObservableList<MainMenuItem> observableList = FXCollections.observableList(mMenuItemList);
 
 		mListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<MainMenuItem>() {
@@ -131,6 +138,10 @@ public class MainController extends BaseViewController {
 		mVbox.getChildren().add(0, menuBar);
 //		mMenuContainerPane.getChildren().add(menuBar);
 
+		if(StoreApp.currentManager != null) {
+			mMgrInfoLabel.setText(StoreApp.currentManager.getName());
+		}
+		
 	}
 
 	private void selectMenu(MainMenuItem item) {
@@ -161,6 +172,21 @@ public class MainController extends BaseViewController {
 
 		addChildController(intent, mContainerPane);
 	}
+	
+	public void mangerAction(ActionEvent event) {
+		addView(ManagerListController.class);
+
+	}
+	public void exitAction(ActionEvent event) {
+		Optional<ButtonType>  result =	WAlert.showConfirmationMessageAlert("是否要退出系统？");
+		if (result.get() == ButtonType.OK){
+
+			exitApp();
+			
+		} else {
+		}
+	}
+	
 
 	class StringListCellFactory implements Callback<ListView<MainMenuItem>, ListCell<MainMenuItem>> {
 		@Override

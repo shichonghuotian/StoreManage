@@ -112,7 +112,14 @@ public class DeviceListController extends BaseViewController {
 		});
 
 		warehouseColumn.setCellValueFactory((CellDataFeatures<Device, String> param) -> {
-			return new SimpleStringProperty(param.getValue().getWarehouse().getName());
+			
+			if(param.getValue().getWarehouse()!=null) {
+				return new SimpleStringProperty(param.getValue().getWarehouse().getName());
+
+			}else {
+				return new SimpleStringProperty("");
+
+			}
 		});
 
 		loadInfoColumn.setCellValueFactory((CellDataFeatures<Device, String> param) -> {

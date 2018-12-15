@@ -10,10 +10,15 @@ public class Category {
 	private long id;
 	
 	
+	
+	@DatabaseField
+	private String code;
 	//类别名称
 	@DatabaseField
 	private String name;
 
+	@DatabaseField(foreign=true,foreignAutoRefresh=true)
+	private ParentCategory parentCategory;
 
 	public Category() {
 		super();
@@ -52,6 +57,30 @@ public class Category {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+
+
+	public ParentCategory getParentCategory() {
+		return parentCategory;
+	}
+
+
+
+	public void setParentCategory(ParentCategory parentCategory) {
+		this.parentCategory = parentCategory;
+	}
+
+
+
+	public String getCode() {
+		return code;
+	}
+
+
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 

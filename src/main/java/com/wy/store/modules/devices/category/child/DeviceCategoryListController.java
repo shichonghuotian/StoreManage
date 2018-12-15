@@ -1,4 +1,4 @@
-package com.wy.store.modules.devices.category;
+package com.wy.store.modules.devices.category.child;
 
 import java.util.List;
 
@@ -10,17 +10,21 @@ import com.wy.store.db.dao.CategoryDao;
 import com.wy.store.db.dao.impl.CategoryDaoImpl;
 import com.wy.store.domain.Category;
 import com.wy.store.domain.Device;
+import com.wy.store.domain.ParentCategory;
 import com.wy.store.domain.User;
+import com.wy.store.domain.Warehouse;
 import com.wy.store.modules.devices.add.DeviceAddController;
 import com.wy.wfx.core.ann.ViewController;
 import com.wy.wfx.core.controller.WFxIntent;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 @ViewController(res="/layout_device_category_list")
@@ -45,15 +49,32 @@ public class DeviceCategoryListController extends BaseViewController{
 		
 		observableList = FXCollections.observableList(list);
 		TableColumn<Category, Long> idColumn = new TableColumn<>("序号");
+		TableColumn<Category, String> codeColumn = new TableColumn<>("编号");
+
 		TableColumn<Category, String> nameColumn = new TableColumn<>("类别");
+		TableColumn<Category, String> parentNameColumn = new TableColumn<>("总类别");
+
 		idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
 		nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+		codeColumn.setCellValueFactory(new PropertyValueFactory<>("code"));
+		
+		parentNameColumn.setCellValueFactory((CellDataFeatures<Category, String> param) -> {
+			
+			if(param.getValue().getParentCategory()!=null) {
+				return new SimpleStringProperty(param.getValue().getParentCategory().getName());
+
+			}else {
+				return new SimpleStringProperty("");
+
+			}
+		});
 		ObservableList<TableColumn<Category,?>> columns = mTableView.getColumns();
-		 columns.addAll(idColumn, nameColumn);
+		 columns.addAll(idColumn,parentNameColumn,codeColumn, nameColumn);
 		
 		mTableView.setItems(observableList);
 
 
+		
 		WEventBus.getDefaultEventBus().register(this);
 		
 	}
@@ -68,7 +89,7 @@ public class DeviceCategoryListController extends BaseViewController{
 	}
 
 	@Subscribe
-	public void onRefresh(WCategoryEvent o) {
+	public void onRefresh(WCategoryAddEvent o) {
 		List<Category> list = mCategoryDao.getAll();
 
 		observableList.clear();

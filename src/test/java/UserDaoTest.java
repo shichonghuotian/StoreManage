@@ -39,7 +39,7 @@ public class UserDaoTest {
 	
 //	@Test
 	public void testAddUser() {
-		User user = new User("sz11112", "f_100001", "second User","123");
+		User user = new User("sz11112",11, "second User","123");
 		
 		UserImage image = new UserImage();
 		image.setUser(user);
