@@ -7,17 +7,21 @@
 
 <AnchorPane prefHeight="332.0" prefWidth="543.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 	<children>
-		<Button layoutX="339.0" layoutY="285.0" mnemonicParsing="false" onAction="#saveAction" prefHeight="27.0" prefWidth="123.0" text="保存" />
-		<Button layoutX="202.0" layoutY="285.0" mnemonicParsing="false" onAction="#cancelAction" prefHeight="27.0" prefWidth="123.0" text="取消" />
+	
 				<Label layoutX="14.0" layoutY="87.0" prefHeight="17.0" prefWidth="75.0" text="用户编号:" />
 				<Label layoutX="14.0" layoutY="41.0" prefHeight="17.0" prefWidth="75.0" text="用户名:" />
 				<Label layoutX="7.0" layoutY="142.0" prefHeight="17.0" prefWidth="75.0" text="指纹信息:" />
-				<TextField fx:id="mUserCodeTextField" layoutX="100.0" layoutY="82.0" prefHeight="27.0" prefWidth="348.0" />
 				<TextField fx:id="mNameTextField" layoutX="100.0" layoutY="36.0" prefHeight="27.0" prefWidth="348.0" />
+				<TextField fx:id="mUserCodeTextField" layoutX="100.0" layoutY="82.0" prefHeight="27.0" prefWidth="348.0" />
       <ProgressBar fx:id="fingerProgressBar" layoutX="100.0" layoutY="166.0" prefHeight="20.0" prefWidth="348.0" progress="0.0" />
       <Label layoutX="103.0" layoutY="134.0" prefHeight="17.0" prefWidth="270.0" text="为了保证指纹识别结果，请录入三次指纹" />
       <Button layoutX="304.0" layoutY="205.0" mnemonicParsing="false" onAction="#beginAction" text="开始录入" />
       <Button layoutX="386.0" layoutY="205.0" mnemonicParsing="false" onAction="#resetAction" text="重置指纹" />
       <Label fx:id="fingerMsgLabel" alignment="TOP_LEFT" layoutX="100.0" layoutY="197.0" prefHeight="55.0" prefWidth="179.0" textAlignment="JUSTIFY" textFill="#f80303" wrapText="true" />
+	
+	<Button layoutX="339.0" layoutY="285.0" mnemonicParsing="false"
+		onAction="#saveAction" prefHeight="27.0" prefWidth="123.0" text="保存" />
+	<Button layoutX="202.0" layoutY="285.0" mnemonicParsing="false"
+		onAction="#cancelAction" prefHeight="27.0" prefWidth="123.0" text="取消" />
 	</children>
 </AnchorPane>

@@ -2,8 +2,10 @@ package com.wy.store.db.dao;
 
 import java.util.List;
 
+import com.wy.store.domain.Category;
 import com.wy.store.domain.Device;
 import com.wy.store.domain.DeviceLoanInfo;
+import com.wy.store.domain.Warehouse;
 
 /**
  * @author Apple
@@ -69,5 +71,6 @@ public interface DeviceLoanInfoDao {
 	 */
 	public List<DeviceLoanInfo> getAll();
 	
+
 
 }

@@ -5,30 +5,40 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="402.0" prefWidth="506.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-	<children>
-		<GridPane layoutX="14.0" layoutY="14.0" prefHeight="138.0" prefWidth="440.0">
-			<columnConstraints>
-				<ColumnConstraints hgrow="SOMETIMES" maxWidth="229.0" minWidth="10.0" prefWidth="147.0" />
-				<ColumnConstraints hgrow="SOMETIMES" maxWidth="319.0" minWidth="10.0" prefWidth="319.0" />
-			</columnConstraints>
-			<rowConstraints>
-				<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-				<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-				<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-			</rowConstraints>
-			<children>
-				<Label text="设备编码" />
-				<Label text="归还人" GridPane.rowIndex="1" />
-				<Label text="归还日期" GridPane.rowIndex="2" />
-				<TextField fx:id="mDeviceIdTextField" promptText="扫描或者录入" GridPane.columnIndex="1" />
-				<TextField fx:id="mUserIdTextField" promptText="指纹识别，或者输入用户编号" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-				<TextField fx:id="mDateTextField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-			</children>
-		</GridPane>
-		<Label layoutX="14.0" layoutY="179.0" text="设备信息" />
-		<Button layoutX="234.0" layoutY="326.0" mnemonicParsing="false" onAction="#cancelAction" prefHeight="27.0" prefWidth="115.0" text="取消" />
-		<Button layoutX="364.0" layoutY="326.0" mnemonicParsing="false" onAction="#saveAction" prefHeight="27.0" prefWidth="115.0" text="确定" />
-      <Label fx:id="mDeviceMsgLabel" alignment="TOP_LEFT" layoutX="138.0" layoutY="179.0" prefHeight="124.0" prefWidth="318.0" wrapText="true" />
-	</children>
+<AnchorPane prefHeight="459.0" prefWidth="550.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <GridPane layoutX="13.0" layoutY="6.0" prefHeight="212.0" prefWidth="521.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="266.0" minWidth="10.0" prefWidth="122.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="458.0" minWidth="10.0" prefWidth="428.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label text="设备编码" />
+            <Label text="归还日期" GridPane.rowIndex="2" />
+            <Label text="备注" GridPane.rowIndex="3" />
+            <TextField fx:id="mDeviceIdTextField" promptText="输入设备编码或者使用扫码枪扫描" GridPane.columnIndex="1" />
+            <TextArea fx:id="mDescriptionTextArea" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <TextField fx:id="mDateTextField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="归还人" GridPane.rowIndex="1" />
+            <Pane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <children>
+                  <TextField fx:id="mUserIdTextField" layoutY="15.0" prefHeight="23.0" prefWidth="231.0" promptText="用户编号" />
+                  <CheckBox fx:id="mCheckbox" layoutX="262.0" layoutY="19.0" mnemonicParsing="false" prefHeight="16.0" prefWidth="134.0" text="手动输入" />
+               </children>
+            </Pane>
+         </children>
+      </GridPane>
+      <Button layoutX="431.0" layoutY="400.0" mnemonicParsing="false" onAction="#saveAction" prefHeight="27.0" prefWidth="93.0" text="确定" />
+      <Button layoutX="317.0" layoutY="400.0" mnemonicParsing="false" onAction="#cancelAction" prefHeight="27.0" prefWidth="93.0" text="取消" />
+      <Label layoutX="14.0" layoutY="250.0" text="设备信息:" />
+      <Label fx:id="mDeviceMsgLabel" alignment="TOP_LEFT" layoutX="119.0" layoutY="243.0" prefHeight="63.0" prefWidth="405.0" text="" wrapText="true" />
+      <Label layoutX="14.0" layoutY="341.0" text="用户信息:" />
+      <Label fx:id="mUserInfoLabel" alignment="TOP_LEFT" layoutX="115.0" layoutY="335.0" prefHeight="42.0" prefWidth="405.0" text="" wrapText="true" />
+   </children>
 </AnchorPane>

@@ -9,9 +9,8 @@
 	<children>
 		<AnchorPane prefHeight="45.0" prefWidth="668.0">
 			<children>
-				<Button layoutX="8.0" layoutY="9.0" mnemonicParsing="false" onAction="#addAction" text="添加" />
-				<Button layoutX="131.0" layoutY="9.0" mnemonicParsing="false" onAction="#deleteAction" text="删除" />
-				<Button layoutX="66.0" layoutY="9.0" mnemonicParsing="false" onAction="#editAction" text="修改" />
+				<Button layoutX="8.0" layoutY="9.0" mnemonicParsing="false" onAction="#addAction" prefHeight="23.0" prefWidth="83.0" text="添加" />
+				<Button layoutX="101.0" layoutY="9.0" mnemonicParsing="false" onAction="#deleteAction" prefHeight="23.0" prefWidth="83.0" text="删除" />
 				<ComboBox fx:id="mSearchComboBox" layoutX="282.0" layoutY="9.0" prefHeight="27.0" prefWidth="118.0" />
 				<TextField fx:id="mSearchTextField" layoutX="410.0" layoutY="9.0" prefHeight="27.0" prefWidth="159.0" promptText="输入" />
 				<ComboBox fx:id="mCategoryComboBox" layoutX="579.0" layoutY="9.0" prefHeight="27.0" prefWidth="118.0" />

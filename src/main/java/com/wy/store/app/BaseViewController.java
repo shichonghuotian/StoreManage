@@ -12,6 +12,7 @@ import com.wy.wfx.core.controller.WFxIntent;
 import com.wy.wfx.core.controller.WFxViewController;
 
 import javafx.fxml.Initializable;
+import javafx.stage.Stage;
 
 public abstract class BaseViewController extends WFxViewController {
 	protected Logger logger = LogManager.getLogger(getClass());
@@ -26,6 +27,18 @@ public abstract class BaseViewController extends WFxViewController {
 	public void onCreate(WFxIntent intent) {
 		// TODO Auto-generated method stub
 		
+		
+	}
+	
+	@Override
+	public void setTitle(String title) {
+		// TODO Auto-generated method stub
+		super.setTitle(title);
+		if(getKeyWindow()!= null) {
+			Stage stage = (Stage) getKeyWindow();
+
+			stage.setTitle(title);
+		}
 	}
 	
 	@Override

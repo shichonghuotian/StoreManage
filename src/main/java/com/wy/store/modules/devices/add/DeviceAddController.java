@@ -55,6 +55,7 @@ public class DeviceAddController extends BaseViewController{
 	public void onCreate(WFxIntent intent) {
 		// TODO Auto-generated method stub
 		super.onCreate(intent);
+		setTitle("添加设备");
 		deviceDao = new DeviceDaoImpl();
 		WarhouseDao warhouseDao = new WarhouseDaoImpl();
 		categoryDao = new CategoryDaoImpl();
@@ -122,6 +123,8 @@ public class DeviceAddController extends BaseViewController{
 //				System.out.println(device);
 				WEventBus.getDefaultEventBus().post(new WDeviceAddEvent());
 				WAlert.showMessageAlert("设备添加成功");
+				dismissController();
+
 
 			}else {
 				WAlert.showMessageAlert("当前设备编号已经存在");

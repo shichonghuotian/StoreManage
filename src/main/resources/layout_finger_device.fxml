@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="204.0" prefWidth="368.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label layoutX="21.0" layoutY="29.0" prefHeight="35.0" prefWidth="50.0" text="指纹仪：" />
+      <Label fx:id="msgLabel" layoutX="71.0" layoutY="29.0" prefHeight="35.0" prefWidth="251.0" />
+      <Button onAction="#testAction" layoutX="115.0" layoutY="144.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="163.0" text="连接指纹仪" />
+   </children>
+</AnchorPane>

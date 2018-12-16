@@ -42,6 +42,8 @@ public abstract class WFxViewController implements Initializable{
 	//
 	private Node view;
 	
+	private String title;
+	
 	public List<WFxViewController> getChildControllerList() {
 		if(childControllerList == null) {
 			childControllerList = new ArrayList<>();
@@ -242,7 +244,16 @@ public abstract class WFxViewController implements Initializable{
 	public void setTabBarController(WFxTabBarController tabBarController) {
 		this.tabBarController = tabBarController;
 	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
 	
 	
 
+	
 }

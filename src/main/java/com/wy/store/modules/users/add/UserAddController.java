@@ -57,6 +57,8 @@ public class UserAddController extends BaseViewController implements WFingerServ
 	public void onCreate(WFxIntent intent) {
 		// TODO Auto-generated method stub
 		super.onCreate(intent);
+		setTitle("添加用户");
+
 		fingerDao = new UserFingerDaoImpl();
 		userDao = new UserDaoImpl();
 		fingerService = WFingerServiceFactory.getFingerService();
@@ -64,6 +66,8 @@ public class UserAddController extends BaseViewController implements WFingerServ
 		fingerService.register(this);
 
 		currentFinger = new UserFinger();
+		
+		System.out.println("maxid = " + fingerDao.getNextId());
 	}
 
 	@Override
@@ -75,12 +79,20 @@ public class UserAddController extends BaseViewController implements WFingerServ
 	}
 
 	@Override
-	public void onFailed(String s) {
+	public void onDeviceConnectFailed(String s) {
 		// TODO Auto-generated method stub
 		
-		System.err.println("connect error: " + s);
+		System.err.println("指纹仪连接状态: " + s);
 		
 	}
+	
+
+	@Override
+	public void onDeviceConnectSuccess(String msg) {
+		// TODO Auto-generated method stub
+		 fingerMsgLabel.setText("指纹仪连接成功");
+	}
+
 	@Override
 	public void onEnrollSuccess(int fingerId, byte[] regBlob) {
 		// TODO Auto-generated method stub
@@ -141,7 +153,7 @@ public class UserAddController extends BaseViewController implements WFingerServ
 			fingerService.openDevice();
 			
 		}
-	
+		fingerMsgLabel.setText("指纹设备已经连接");
 		fingerService.enrollFinger();
 		currentFinger = new UserFinger();
 
@@ -179,8 +191,9 @@ public class UserAddController extends BaseViewController implements WFingerServ
 			System.out.println("isexist = " + isExist);
 			if (!userDao.isExist(user.getUserId())) {
 
+		
 				fingerDao.addFinger(currentFinger);
-				
+				user.setFingerId(currentFinger.getFingerId());
 				userDao.addUser(user);
 
 				WEventBus.getDefaultEventBus().post(new WUserAddEvent());;

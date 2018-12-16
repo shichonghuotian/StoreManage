@@ -2,13 +2,8 @@ package com.wy.store.modules.devices.mgr;
 
 import java.util.Date;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-
 import com.wy.store.app.BaseViewController;
+import com.wy.store.app.StoreApp;
 import com.wy.store.common.Utils.DateUtils;
 import com.wy.store.common.Utils.StringUtils;
 import com.wy.store.common.eventbus.WEventBus;
@@ -25,16 +20,14 @@ import com.wy.store.db.dao.impl.UserDaoImpl;
 import com.wy.store.domain.Device;
 import com.wy.store.domain.DeviceLoanInfo;
 import com.wy.store.domain.User;
-import com.wy.store.modules.devices.warehouse.WWarehouseAddEvent;
 import com.wy.wfx.core.ann.ViewController;
 import com.wy.wfx.core.controller.WFxIntent;
 
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -49,9 +42,13 @@ public class DeviceLoanController extends BaseViewController implements WFingerS
 	@FXML
 	TextField mDateTextField;
 	@FXML
+	CheckBox mCheckbox;
+	@FXML
 	TextArea mDescriptionTextArea;
 	@FXML
 	Label mDeviceMsgLabel;
+	@FXML
+	Label mUserInfoLabel;
 	
 	DeviceDao deviceDao;
 	UserDao userDao;
@@ -68,6 +65,7 @@ public class DeviceLoanController extends BaseViewController implements WFingerS
 	public void onCreate(WFxIntent intent) {
 		// TODO Auto-generated method stub
 		super.onCreate(intent);
+		setTitle("设备借出");
 		fingerService = WFingerServiceFactory.getFingerService();
 		deviceDao = new DeviceDaoImpl();
 		userDao = new UserDaoImpl();
@@ -98,15 +96,97 @@ public class DeviceLoanController extends BaseViewController implements WFingerS
 				
 			}
 		});
+		mUserIdTextField.textProperty().addListener(new ChangeListener<String>() {
+
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				// TODO Auto-generated method stub
+				if(mCheckbox.isSelected()) {
+					loadUser();
+
+				}
+				
+			}
+		});
+		mUserIdTextField.setDisable(true);
+
+		mCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				// TODO Auto-generated method stub
+				
+				//支持手动输入用户编号
+				if(mCheckbox.isSelected()) {
+					mUserIdTextField.setDisable(false);
+				}else {
+					mUserIdTextField.setDisable(true);
+
+					
+				}
+			}
+		});
+	
+		connectFingerDevice();
+		fingerService.receivedFinger();
 		
 	}
+	
+	
 	@Override
 	public void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
 		fingerService.unregister(this);
-		System.out.println("destory loan");
 	} 
+	
+	@Override
+	public void onFingerReceived(int fingerId, int score) {
+		// TODO Auto-generated method stub
+		currentUser = userDao.getUserOfFingerId(fingerId +"");
+		logger.info("device --- user " + currentUser);
+
+		if(currentUser != null) {//
+			
+			//设置一下
+			mUserIdTextField.setText(currentUser.getUserId());
+			
+			setUserInfo();
+		}else {
+			currentUser = null;
+			setUserInfo();
+
+		}
+	}
+	
+	private void connectFingerDevice() {
+	if(!fingerService.isOpen()) {
+			
+			fingerService.openDevice();
+			
+			fingerService.addFingerDataToDevice();
+			
+			
+		}
+	}
+	
+	private void loadUser() {
+
+		String userId = mUserIdTextField.getText().trim();
+		User user = userDao.getUser(userId);
+		System.out.println("user = " + user);
+		if(user !=null) {
+			
+			currentUser = user;
+			
+			
+		}else {
+			currentUser = null;
+			
+		
+		}
+		setUserInfo();
+	}
 	
 	private void loadDevice() {
 		String deviceId = mDeviceIdTextField.getText().trim();
@@ -121,12 +201,19 @@ public class DeviceLoanController extends BaseViewController implements WFingerS
 			
 			builder.append("设备编号：" + currentDevice.getDeviceId());
 			builder.append("    ");
+			
 			builder.append("设备名称：" +currentDevice.getName() );
 			builder.append("    ");
-			builder.append("设备类别：" + currentDevice.getCategory().getParentCategory().getName() + "-" + currentDevice.getCategory().getName());
-			builder.append("    ");
-			builder.append("仓库：" + currentDevice.getWarehouse().getName());
+			if(currentDevice.getCategory()!=null) {
+				
+				builder.append("设备类别：" + currentDevice.getCategory().getParentCategory().getName() + "-" + currentDevice.getCategory().getName());
+				builder.append("    ");
+			}
+			if(currentDevice.getWarehouse() != null) {
+				builder.append("仓库：" + currentDevice.getWarehouse().getName());
+			}
 			mDeviceMsgLabel.setText(builder.toString());
+
 
 		}else {
 			mDeviceMsgLabel.setText("");
@@ -135,19 +222,24 @@ public class DeviceLoanController extends BaseViewController implements WFingerS
 	}
 	
 	
-	@Override
-	public void onFingerReceived(String fingerId) {
-		// TODO Auto-generated method stub
-		currentUser = userDao.getUserOfFingerId(fingerId);
-		logger.info("device --- user " + currentUser);
+	private void setUserInfo() {
+		
+		if(currentUser!=null) {
+			StringBuilder builder = new StringBuilder();
+			
+			builder.append("用户编号：" + currentUser.getUserId());
+			builder.append("    ");
+			
+			builder.append("用户：" +currentUser.getName() );
+			
+			mUserInfoLabel.setText(builder.toString());
+		}else {
+			mUserInfoLabel.setText("");
 
-		if(currentUser != null) {//
-			
-			//设置一下
-			mUserIdTextField.setText(currentUser.getName());
-			
 		}
 	}
+	
+	
 
 	
 	public void saveAction(ActionEvent event) {
@@ -159,18 +251,22 @@ public class DeviceLoanController extends BaseViewController implements WFingerS
 			
 			Device device = deviceDao.getDevice(deviceId);
 			
-			String userId = mUserIdTextField.getText().trim();
-			User user = userDao.getUser(userId);
+
+			
+			if(currentUser ==null) {
+				WAlert.showMessageAlert("请添加用户");
+				
+			}
 			
 			Date date = new Date();
 			
-			if(device!=null && user != null) {
+			if(device!=null && currentUser != null) {
 				DeviceLoanInfo loanInfo = new DeviceLoanInfo();
 				
 				loanInfo.setDevice(device);
-				loanInfo.setTakeUser(user);
+				loanInfo.setTakeUser(currentUser);
 				loanInfo.setLoan(true);
-				
+				loanInfo.setMaster(StoreApp.currentManager);
 				loanInfo.setLoanDate(date);
 				loanInfo.setDescription(mDescriptionTextArea.getText().trim());
 				
@@ -182,6 +278,8 @@ public class DeviceLoanController extends BaseViewController implements WFingerS
 					WEventBus.getDefaultEventBus().post(new WLoanReturnEvent());
 
 					WAlert.showMessageAlert("借出成功");
+					
+					dismissController();
 
 				}else {
 					WAlert.showMessageAlert("工具已经借出去了");
@@ -213,6 +311,7 @@ public class DeviceLoanController extends BaseViewController implements WFingerS
 
 		return !StringUtils.isEmpty(mDeviceIdTextField.getText()) && !StringUtils.isEmpty(mUserIdTextField.getText()) ;
 	}
+
 
 	
 

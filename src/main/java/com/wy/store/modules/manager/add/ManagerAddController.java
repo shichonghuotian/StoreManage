@@ -31,6 +31,8 @@ public class ManagerAddController extends BaseViewController{
 	public void onCreate(WFxIntent intent) {
 		// TODO Auto-generated method stub
 		super.onCreate(intent);
+		setTitle("添加管理员");
+
 		managerDao = new ManagerDaoImpl();
 	}
 	
@@ -62,6 +64,7 @@ public class ManagerAddController extends BaseViewController{
 				WEventBus.getDefaultEventBus().post(new WManagerAddEvent());
 
 				WAlert.showMessageAlert("添加成功");
+				dismissController();
 
 			}else {
 				WAlert.showMessageAlert("当前管理员已经存在");

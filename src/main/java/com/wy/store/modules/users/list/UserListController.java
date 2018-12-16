@@ -57,9 +57,10 @@ public class UserListController extends BaseViewController {
 
 	UserDao mUserDao;
 
-	
 	@Override
-	public void initialize(URL location, ResourceBundle resources) {
+	public void onCreate(WFxIntent intent) {
+		// TODO Auto-generated method stub
+		super.onCreate(intent);
 		// TODO Auto-generated method stub
 		mUserDao = new UserDaoImpl();
 		// final ObservableList<Person> data =
@@ -110,8 +111,9 @@ public class UserListController extends BaseViewController {
 		mSearchComboBox.getSelectionModel().select(0);
 
 		WEventBus.getDefaultEventBus().register(this);
-
 	}
+	
+	
 
 	@Override
 	public void onDestroy() {

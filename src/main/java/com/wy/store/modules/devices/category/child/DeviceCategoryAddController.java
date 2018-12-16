@@ -45,6 +45,7 @@ public class DeviceCategoryAddController extends BaseViewController {
 		// TODO Auto-generated method stub
 		
 		super.onCreate(intent);
+		setTitle("添加类别");
 		mCategoryDao = new CategoryDaoImpl();
 		mParentCategoryDao = new ParentCategoryDaoImpl();
 		
@@ -97,6 +98,9 @@ public class DeviceCategoryAddController extends BaseViewController {
 			
 			WEventBus.getDefaultEventBus().post(new WCategoryAddEvent());
 			WAlert.showMessageAlert("添加成功");
+			
+			dismissController();
+
 
 		}
 		

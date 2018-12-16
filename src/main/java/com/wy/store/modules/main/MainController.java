@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wy.store.app.BaseViewController;
 import com.wy.store.app.StoreApp;
+import com.wy.store.common.finger.WFingerService;
+import com.wy.store.common.finger.WFingerServiceFactory;
+import com.wy.store.common.finger.WFingerServiceLoadListener;
 import com.wy.store.common.view.WAlert;
 import com.wy.store.db.dao.UserDao;
 import com.wy.store.db.dao.impl.UserDaoImpl;
@@ -17,6 +20,7 @@ import com.wy.store.modules.devices.category.parent.DeviceParentCategoryListCont
 import com.wy.store.modules.devices.list.DeviceListController;
 import com.wy.store.modules.devices.mgr.DeviceLoanMgrController;
 import com.wy.store.modules.devices.warehouse.WarehouseListController;
+import com.wy.store.modules.finger.FingerDeviceController;
 import com.wy.store.modules.login.LoginController;
 import com.wy.store.modules.manager.list.ManagerListController;
 import com.wy.store.modules.users.list.UserListController;
@@ -31,6 +35,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
@@ -42,11 +47,13 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 
 @ViewController(res = "/layout_main.fxml")
-public class MainController extends BaseViewController {
+public class MainController extends BaseViewController implements WFingerServiceLoadListener {
 
 	@FXMLWindow
 	Window window;
@@ -61,7 +68,8 @@ public class MainController extends BaseViewController {
 
 	@FXML
 	VBox mVbox;
-	
+	@FXML
+	Label	mFingerMsgLabel;
 	@FXML
 	ListView<MainMenuItem> mListView;
 
@@ -72,10 +80,15 @@ public class MainController extends BaseViewController {
 //	@Autowired
 	UserDao userDao;
 
+	WFingerService fingerService;
 	@Override
 	public void onCreate(WFxIntent intent) {
 		// TODO Auto-generated method stub
 		super.onCreate(intent);
+		setTitle("工具管理系统");
+		fingerService = WFingerServiceFactory.getFingerService();
+		
+		fingerService.registerConnectListener(this);
 
 		try {
 			presentController(new WFxIntent(LoginController.class));
@@ -86,6 +99,12 @@ public class MainController extends BaseViewController {
 		userDao = new UserDaoImpl();
 		
 		
+		if(fingerService.isOpen()) {
+			
+			mFingerMsgLabel.setText("已连接");
+		}else {
+			mFingerMsgLabel.setText("未连接");
+		}
 
 		mMenuItemList = new ArrayList<>();
 //		mMenuItemList.add(new MainMenuItem("管理员", ManagerListController.class));
@@ -146,7 +165,33 @@ public class MainController extends BaseViewController {
 			mMgrInfoLabel.setText(StoreApp.currentManager.getName());
 		}
 		
+		
+		if(getKeyWindow() !=null) {
+			
+			Stage stage = (Stage) getKeyWindow();
+			stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+				
+				@Override
+				public void handle(WindowEvent event) {
+					// TODO Auto-generated method stub
+					event.consume();
+//					System.out.println("==========================close==================");
+
+					exitAction(null);
+					
+				}
+			});
+		}
 	}
+	
+	@Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		
+		WFingerServiceFactory.getFingerService().unregisterConnectListener(this);
+
+	} 
 
 	private void selectMenu(MainMenuItem item) {
 		addView(item.getControlerClass());
@@ -166,9 +211,24 @@ public class MainController extends BaseViewController {
 		addView(DeviceLoanMgrController.class);
 
 	}
+	public void fingerAction(ActionEvent event) {
+		try {
+			presentController(new WFxIntent(FingerDeviceController.class));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
+	}
+
+	
 	protected <T> void addView(Class<? extends WFxViewController> controllerClass) {
 
+		for(WFxViewController controller : getChildControllerList()) {
+			//手动调用一下回收的方法
+			controller.onDestroy();
+			
+		}
 		removeAllChildController();
 		mContainerPane.getChildren().clear();
 
@@ -187,8 +247,7 @@ public class MainController extends BaseViewController {
 
 			exitApp();
 			
-		} else {
-		}
+		} 
 	}
 	
 
@@ -208,6 +267,20 @@ public class MainController extends BaseViewController {
 				}
 			}
 		}
+	}
+
+
+	@Override
+	public void onDeviceConnectFailed(String s) {
+		// TODO Auto-generated method stub
+		mFingerMsgLabel.setText(s);
+	}
+
+	@Override
+	public void onDeviceConnectSuccess(String msg) {
+		// TODO Auto-generated method stub
+		mFingerMsgLabel.setText("已连接");
+
 	}
 
 }

@@ -10,7 +10,7 @@ public interface WFingerService {
 	/**
 	 * 使用base64,或者使用图片，应该都是没有问题的
 	 */
-	public void registerFingerId(int fid,String base64) ;
+	public void addFingerDataToDevice() ;
 	
 	
 	public void enrollFinger();

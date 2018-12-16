@@ -24,8 +24,8 @@ public class WZKFingerServiceImpl implements WFingerService {
 	private long mhDevice = 0;
 	private long mhDB = 0;
 	// 检查假指纹
-	private boolean isFakeFunOn = false;
 
+	private boolean isFakeFunOn = false;
 	private int enroll_idx = 0;
 
 	//the width of fingerprint image
@@ -65,13 +65,14 @@ public class WZKFingerServiceImpl implements WFingerService {
 			if (FingerprintSensorErrorCode.ZKFP_ERR_OK != FingerprintSensorEx.Init()) {
 
 				// 失败
+				connectDeviceError("连接失败");
 
 			}
 			
 		} catch (UnsatisfiedLinkError e) {
 			// TODO: handle exception
 			
-			deviceInitError("没有安装对应的驱动");
+			connectDeviceError("没有安装对应的驱动");
 			
 			return -1;
 		}
@@ -85,6 +86,9 @@ public class WZKFingerServiceImpl implements WFingerService {
 			freeSensor();
 
 			// ---- 需要一个提示
+			connectDeviceError("未发现设备，请将指纹仪连接到电脑");
+
+			return -1;
 		}
 
 		// 连接到第一个设备
@@ -92,14 +96,20 @@ public class WZKFingerServiceImpl implements WFingerService {
 
 		if (!isDeviceConnected()) {// 打开设备失败
 
+			connectDeviceError("打开设备失败");
+
 			freeSensor();
+			return -1;
 		}
 
 		mhDB = FingerprintSensorEx.DBInit();
 
 		if (!isDBConnected()) {
+			connectDeviceError("打开设备失败");
 
 			freeSensor();
+			
+			return -1;
 		}
 		// For ISO 1 /Ansi 0
 		int nFmt = 1;
@@ -129,13 +139,54 @@ public class WZKFingerServiceImpl implements WFingerService {
 	    workThread.start();// 线程启动
 
 
+	    connectDeviceSuccess("已连接");
 	    
 		return FingerprintSensorErrorCode.ZKFP_ERR_OK;
 
 	}
 
 	@Override
-	public void registerFingerId(int fid, String base64) {
+	public void addFingerDataToDevice() {
+		// TODO Auto-generated method stub
+		
+		long time = System.currentTimeMillis();
+		clearAllFingers();
+
+		UserFingerDao dao = new UserFingerDaoImpl();
+		
+		List<UserFinger> list = dao.getAllUserFingers();
+		
+		for(UserFinger finger : list) {
+			
+			addFinger(finger);
+		}
+		
+		System.out.println("add finger spend time = " + (System.currentTimeMillis() - time));
+	
+	}
+	
+	private void addFinger(UserFinger finger) {
+		
+//		byte[] fpTemplate = new byte[2048];
+//		int[] sizeFPTemp = new int[1];
+//		sizeFPTemp[0] = 2048;
+		
+	
+		int	ret = FingerprintSensorEx.DBAdd( mhDB, (int)finger.getFingerId(), finger.getFingerBlob());
+		
+		if(0 == ret) {
+			System.out.println("finger " + finger.getFingerId()  + " " + finger.getFingerBlob().length + " success");
+			
+		}else {
+			System.out.println("finger " + finger.getFingerId() + " error");
+
+		}
+		
+	}
+	
+	private void clearAllFingers() {
+		
+		FingerprintSensorEx.DBClear(mhDB);
 
 	}
 
@@ -188,7 +239,7 @@ public class WZKFingerServiceImpl implements WFingerService {
 	@Override
 	public void receivedFinger() {
 		// TODO Auto-generated method stub
-
+		this.status = ZKDeviceStatus.IDENTIFY;
 	}
 
 	@Override
@@ -249,9 +300,18 @@ public class WZKFingerServiceImpl implements WFingerService {
 		int ret = FingerprintSensorEx.DBIdentify(mhDB, template, fid, score);
 		if (ret == 0) {
 			//验证成功了
+			for(WFingerServiceListener listener : listeners) {
+				
+				listener.onFingerReceived(fid[0], score[0]);
+			}
+			
+			System.out.println("Identify succ, fid=" + fid[0] + ",score=" + score[0]);
 //			textArea.setText("Identify succ, fid=" + fid[0] + ",score=" + score[0]);
+			
 		} else {
 			//验证失败
+			System.out.println("Identify fail, errcode=" + ret);
+
 //			textArea.setText("Identify fail, errcode=" + ret);
 		}
 	}
@@ -296,7 +356,6 @@ public class WZKFingerServiceImpl implements WFingerService {
 			//有时间可以处理一下业务，自己处理id
 			if (0 == (ret = FingerprintSensorEx.DBMerge(mhDB, regtemparray[0], regtemparray[1], regtemparray[2],
 					regTemp, _retLen)) && 0 == (ret = FingerprintSensorEx.DBAdd(mhDB, iFid, regTemp))) {
-				iFid++;
 				cbRegTemp = _retLen[0];
 				System.arraycopy(regTemp, 0, lastRegTemp, 0, cbRegTemp);
 				// Base64 Template
@@ -304,7 +363,7 @@ public class WZKFingerServiceImpl implements WFingerService {
 //					textArea.setText("enroll succ");
 				System.out.println("enroll succ");
 				for(WFingerServiceEnrollListener listener : enrollListeners) {
-					listener.onEnrollSuccess(iFid, null);
+					listener.onEnrollSuccess(iFid, regTemp);
 				}
 			} else {
 				
@@ -337,7 +396,7 @@ public class WZKFingerServiceImpl implements WFingerService {
 			int ret = 0;
 			while (!mbStop) {
 				templateLen[0] = 2048;
-				System.out.println("-----------------------------WorkThread run-----------------------");
+//				System.out.println("--------------1--------------/-WorkThread run " + status);
 
 				if (0 == (ret = FingerprintSensorEx.AcquireFingerprint(mhDevice, imgbuf, template, templateLen))) {
 					if (isFakeFunOn) {
@@ -353,7 +412,12 @@ public class WZKFingerServiceImpl implements WFingerService {
 							return;
 						}
 					}
+//					System.out.println("-----------2------------------WorkThread run " + status);
+
 					OnExtractOK(template, templateLen[0]);
+				}else {
+//					System.out.println("-----------2------------------WorkThread run no finger");
+
 				}
 				try {
 					Thread.sleep(500);
@@ -420,11 +484,19 @@ public class WZKFingerServiceImpl implements WFingerService {
 		
 	}
 //
-	public void deviceInitError(String error) {
+	public void connectDeviceError(String error) {
 		
 		for(WFingerServiceLoadListener listener : loadListeners) {
 			
-			listener.onFailed(error);
+			listener.onDeviceConnectFailed(error);
+		}
+	}
+	
+	public void connectDeviceSuccess(String msg) {
+		
+		for(WFingerServiceLoadListener listener : loadListeners) {
+			
+			listener.onDeviceConnectFailed(msg);
 		}
 	}
 }

@@ -1,6 +1,7 @@
 package com.wy.store.db.dao.impl;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.Level;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 import com.wy.store.db.dao.DeviceLoanInfoDao;
 import com.wy.store.db.jdbc.StoreDB;
 import com.wy.store.domain.Device;
@@ -156,8 +158,8 @@ public class DeviceLoanInfoDaoImpl implements DeviceLoanInfoDao {
 
 		DeviceLoanInfo info = builder.where().eq("device_id", device.getId()).and().eq("isLoan", true).queryForFirst();
 		
-		logger.log(Level.DEBUG, builder.prepareStatementString());
-		logger.log(Level.DEBUG, "info = " + info);
+//		logger.log(Level.DEBUG, builder.prepareStatementString());
+//		logger.log(Level.DEBUG, "info = " + info);
 
 	
 		if(info != null) {
@@ -172,4 +174,6 @@ public class DeviceLoanInfoDaoImpl implements DeviceLoanInfoDao {
 		
 		return false;
 	}
+
+
 }

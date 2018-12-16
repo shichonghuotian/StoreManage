@@ -14,7 +14,6 @@
                <children>
                   <Button fx:id="mDeleteButton" layoutX="72.0" layoutY="14.0" mnemonicParsing="false" onAction="#deleteAction" text="删除" />
                   <Button fx:id="mAddButton" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#addAction" text="添加" />
-                  <Button fx:id="mEditButton" layoutX="126.0" layoutY="14.0" mnemonicParsing="false" onAction="#editAction" text="编辑" />
                </children>
             </Pane>
             <TableView fx:id="mTableView" layoutX="4.0" layoutY="54.0" prefHeight="454.0" prefWidth="836.0">

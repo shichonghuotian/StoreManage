@@ -45,6 +45,7 @@ public class LoginController extends BaseViewController{
 	public void onCreate(WFxIntent intent) {
 		// TODO Auto-generated method stub
 		super.onCreate(intent);
+		setTitle("登录");
 		managerDao = new ManagerDaoImpl();
 		mNameTextField.setText("admin");
 		mPwdTextField.setText("admin");

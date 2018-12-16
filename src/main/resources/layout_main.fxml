@@ -12,14 +12,15 @@
          <children>
             <AnchorPane prefHeight="61.0" prefWidth="1053.0">
                <children>
-                  <Label layoutX="14.0" layoutY="1.0" prefHeight="61.0" prefWidth="206.0" text="工具管理系统">
+                  <Label layoutX="18.0" layoutY="1.0" prefHeight="61.0" prefWidth="206.0" text="工具管理系统">
                      <font>
                         <Font size="33.0" />
                      </font>
                   </Label>
                   <Separator layoutX="-1.0" layoutY="60.0" prefHeight="3.0" prefWidth="1053.0" />
-                  <Button layoutX="883.0" layoutY="18.0" mnemonicParsing="false" onAction="#mangerAction" prefHeight="27.0" prefWidth="69.0" text="管理员" />
-                  <Button layoutX="968.0" layoutY="18.0" mnemonicParsing="false" onAction="#exitAction" prefHeight="27.0" prefWidth="69.0" text="退出" />
+                  <Button layoutX="872.0" layoutY="18.0" mnemonicParsing="false" onAction="#mangerAction" prefHeight="27.0" prefWidth="80.0" text="管理员" />
+                  <Button layoutX="968.0" layoutY="18.0" mnemonicParsing="false" onAction="#exitAction" prefHeight="27.0" prefWidth="69.0" text="退出" textFill="#f20707" />
+                  <Button layoutX="759.0" layoutY="20.0" mnemonicParsing="false" onAction="#fingerAction" prefHeight="23.0" prefWidth="80.0" text="指纹仪" />
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="525.0" prefWidth="1053.0">
@@ -38,7 +39,9 @@
             <Pane prefHeight="35.0" prefWidth="1053.0">
                <children>
                   <Label layoutX="20.0" layoutY="7.0" prefHeight="17.0" prefWidth="43.0" text="操作员:" />
-                  <Label fx:id="mMgrInfoLabel" layoutX="69.0" layoutY="6.0" prefHeight="17.0" prefWidth="255.0" />
+                  <Label fx:id="mMgrInfoLabel" layoutX="69.0" layoutY="6.0" prefHeight="17.0" prefWidth="176.0" />
+                  <Label layoutX="276.0" layoutY="8.0" prefHeight="15.0" prefWidth="52.0" text="指纹仪：" />
+                  <Label fx:id="mFingerMsgLabel" layoutX="328.0" layoutY="10.0" prefHeight="15.0" prefWidth="200.0" />
                </children>
             </Pane>
          </children>

@@ -3,17 +3,23 @@ package com.wy.store.modules.devices.mgr;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.hamcrest.SelfDescribing;
 
+import com.google.common.base.Optional;
 import com.google.common.eventbus.Subscribe;
 import com.wy.store.app.BaseViewController;
+import com.wy.store.app.StoreApp;
 import com.wy.store.common.Utils.DateUtils;
 import com.wy.store.common.eventbus.WEventBus;
 import com.wy.store.db.dao.DeviceLoanInfoDao;
 import com.wy.store.db.dao.impl.DeviceLoanInfoDaoImpl;
 import com.wy.store.domain.Category;
+import com.wy.store.domain.Device;
 import com.wy.store.domain.DeviceLoanInfo;
+import com.wy.store.domain.Warehouse;
 import com.wy.store.modules.devices.category.child.WCategoryAddEvent;
 import com.wy.wfx.core.ann.FXMLWindow;
 import com.wy.wfx.core.ann.ViewController;
@@ -102,7 +108,15 @@ public class DeviceLoanMgrController extends BaseViewController {
 		descColumn.setCellValueFactory((CellDataFeatures<DeviceLoanInfo, String> param) -> new SimpleStringProperty(
 				param.getValue().getDescription()));
 		
-		managerColumn.setCellValueFactory((CellDataFeatures<DeviceLoanInfo, String> param) -> new SimpleStringProperty("admin"));
+		managerColumn.setCellValueFactory((CellDataFeatures<DeviceLoanInfo, String> param) -> {
+		
+			if(StoreApp.currentManager !=null) {
+				return new SimpleStringProperty(StoreApp.currentManager.getName());
+			}else {
+			return	new SimpleStringProperty("admin");
+
+			}
+		});
 		
 		ObservableList<TableColumn<DeviceLoanInfo, ?>> columns = mTableView.getColumns();
 		columns.addAll(idColumn, codeColumn, nameColumn, loanUserColumn, loanDateColumn, returnColumn, returnDateColumn,
@@ -138,12 +152,49 @@ public class DeviceLoanMgrController extends BaseViewController {
 	}
 	
 	
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
 
-	}
 
 	public void beginSearch() {
+		boolean isid = mSearchComboBox.getSelectionModel().getSelectedIndex() == 0;
+
+		String deviceId = "";
+
+		String deviceName = "";
+
+		if (isid) {
+			deviceId = mSearchTextField.getText().trim();
+		} else {
+			deviceName = mSearchTextField.getText().trim();
+		}
+		
+		final String dID = deviceId;
+		
+		final String dName = deviceName;
+
+		List<DeviceLoanInfo> list = deviceLoanInfoDao.getAll();
+
+	
+		 List<DeviceLoanInfo> ls= list.stream()
+				 .filter(a -> { 
+					 
+					 if(isid) {
+						 return (a.getDevice().getDeviceId() + "").contains(dID);
+					 }else {
+						 return a.getDevice().getName().contains(dName);
+
+						 
+					 }
+					
+					 
+				 }) 
+				 .collect(Collectors.toList());
+
+
+	
+		
+		observableList.clear();
+
+		observableList.addAll(ls);
 
 	}
 
