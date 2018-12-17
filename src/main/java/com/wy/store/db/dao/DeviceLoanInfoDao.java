@@ -65,6 +65,9 @@ public interface DeviceLoanInfoDao {
 	 */
 	public DeviceLoanInfo getNewestDeviceLoanInfo(Device device);
 	
+	
+	public void delete(Device device);
+
 	/**
 	 * 
 	 * @return

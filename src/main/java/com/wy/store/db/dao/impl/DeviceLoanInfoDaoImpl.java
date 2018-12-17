@@ -12,12 +12,16 @@ import org.springframework.stereotype.Repository;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.wy.store.db.dao.DeviceLoanInfoDao;
+import com.wy.store.db.dao.UserFingerDao;
 import com.wy.store.db.jdbc.StoreDB;
 import com.wy.store.domain.Device;
 import com.wy.store.domain.DeviceLoanInfo;
+import com.wy.store.domain.User;
+import com.wy.store.domain.UserFinger;
 
 @Component
 public class DeviceLoanInfoDaoImpl implements DeviceLoanInfoDao {
@@ -173,6 +177,24 @@ public class DeviceLoanInfoDaoImpl implements DeviceLoanInfoDao {
 	}
 		
 		return false;
+	}
+
+
+	@Override
+	public void delete(Device device) {
+		
+		
+		try {
+			DeleteBuilder<DeviceLoanInfo, Long> builder = dao.deleteBuilder();
+			
+			builder.where().eq("device_id", device.getDeviceId());
+			
+			builder.delete();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 

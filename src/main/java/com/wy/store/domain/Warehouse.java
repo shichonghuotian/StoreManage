@@ -13,7 +13,8 @@ public class Warehouse {
 	@DatabaseField
 	private String name;
 
-
+//	shelves
+	
 	
 	public Warehouse() {
 		super();

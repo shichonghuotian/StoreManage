@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.wy.store.domain.Category;
 import com.wy.store.domain.Device;
-import com.wy.store.domain.User;
 import com.wy.store.domain.Warehouse;
 
 public interface DeviceDao {
@@ -17,6 +16,8 @@ public boolean add(Device device);
 	
 	public Device getDevice(String deviceId);
 
+	public void delete(Device device);
+	public void update(Device device);
 
 	public boolean isExist(String deviceId);
 	

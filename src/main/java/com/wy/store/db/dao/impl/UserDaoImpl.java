@@ -48,6 +48,18 @@ public class UserDaoImpl implements UserDao{
 		return b == 1;
 
 	}
+	public boolean update(User user) {
+		int b = 0;
+		try {
+			b = dao.update(user);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		return b == 1;
+		
+	}
 
 	public List<User> getAllUser() {
 		List<User> list = null;

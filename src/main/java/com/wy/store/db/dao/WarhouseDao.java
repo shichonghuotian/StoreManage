@@ -9,6 +9,7 @@ public interface WarhouseDao {
 
 	
 	public boolean add(Warehouse warehouse);
+	public boolean update(Warehouse warehouse);
 	
 	public List<Warehouse> getAll();
 	

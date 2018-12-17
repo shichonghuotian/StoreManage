@@ -6,6 +6,7 @@ import com.wy.store.domain.User;
 
 public interface UserDao {
 	public boolean addUser(User user);
+	public boolean update(User user);
 
 	
 	public List<User> getAllUser();

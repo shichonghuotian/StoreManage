@@ -30,6 +30,8 @@ import com.wy.store.domain.UserFinger;
 import com.wy.store.domain.UserImage;
 import com.wy.store.domain.Warehouse;
 
+import javafx.scene.control.Tab;
+
 //返回connection
 public class StoreDB {
 	Logger logger = LogManager.getLogger(getClass());
@@ -64,6 +66,9 @@ public class StoreDB {
 
 //		TableUtils.dropTable(connectionSource, Category.class,true);
 //		TableUtils.dropTable(connectionSource, ParentCategory.class,true);
+		
+//		TableUtils.dropTable(connectionSource, Device.class,true);
+
 		
 		TableUtils.createTableIfNotExists(connectionSource, User.class);
 		TableUtils.createTableIfNotExists(connectionSource, UserImage.class);

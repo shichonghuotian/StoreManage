@@ -1,15 +1,17 @@
 package com.wy.store.modules.devices.list;
 
-import java.net.URL;
 import java.util.List;
-import java.util.ResourceBundle;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.eventbus.Subscribe;
+import com.j256.ormlite.dao.Dao;
 import com.wy.store.app.BaseViewController;
+import com.wy.store.common.Utils.DateUtils;
 import com.wy.store.common.eventbus.WEventBus;
+import com.wy.store.common.view.WAlert;
 import com.wy.store.db.dao.CategoryDao;
 import com.wy.store.db.dao.DeviceDao;
 import com.wy.store.db.dao.DeviceLoanInfoDao;
@@ -23,7 +25,6 @@ import com.wy.store.domain.Device;
 import com.wy.store.domain.DeviceLoanInfo;
 import com.wy.store.domain.Warehouse;
 import com.wy.store.modules.devices.add.DeviceAddController;
-import com.wy.store.modules.devices.category.child.WCategoryAddEvent;
 import com.wy.wfx.core.ann.FXMLWindow;
 import com.wy.wfx.core.ann.ViewController;
 import com.wy.wfx.core.controller.WFxIntent;
@@ -34,6 +35,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
@@ -101,15 +103,21 @@ public class DeviceListController extends BaseViewController {
 		TableColumn<Device, String> codeColumn = new TableColumn<>("设备编号");
 
 		TableColumn<Device, String> nameColumn = new TableColumn<>("设备名称");
+		
+		TableColumn<Device, String> dateColumn = new TableColumn<>("创建时间");
+
 		TableColumn<Device, String> categoryColumn = new TableColumn<>("设备类别");
 		TableColumn<Device, String> warehouseColumn = new TableColumn<>("仓库");
+		TableColumn<Device, String> shelveColumn = new TableColumn<>("货架");
+		TableColumn<Device, String> latticeColumn = new TableColumn<>("货位");
 		TableColumn<Device, String> loadInfoColumn = new TableColumn<>("状态");
 
 		idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
 		codeColumn.setCellValueFactory(new PropertyValueFactory<>("deviceId"));
 		nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 		
-		
+		dateColumn.setCellValueFactory((CellDataFeatures<Device, String> param) -> new SimpleStringProperty(DateUtils.getCustomFormatDateString(
+				param.getValue().getCreateDate())));
 
 		categoryColumn.setCellValueFactory((CellDataFeatures<Device, String> param) -> {
 			if(param.getValue().getCategory()!=null) {
@@ -132,6 +140,11 @@ public class DeviceListController extends BaseViewController {
 			}
 		});
 
+		shelveColumn.setCellValueFactory(new PropertyValueFactory<>("warehouseShelve"));
+
+		latticeColumn.setCellValueFactory(new PropertyValueFactory<>("shelveLattice"));
+		
+		
 		loadInfoColumn.setCellValueFactory((CellDataFeatures<Device, String> param) -> {
 			
 			if(param.getValue().getLoanInfo() !=null && param.getValue().getLoanInfo().isLoan()) {
@@ -147,7 +160,7 @@ public class DeviceListController extends BaseViewController {
 		ObservableList<TableColumn<Device,?>> columns = mTableView.getColumns();
 		
 		
-		 columns.addAll(idColumn, codeColumn, nameColumn, categoryColumn, warehouseColumn,loadInfoColumn);
+		 columns.addAll(idColumn, codeColumn, nameColumn,dateColumn, categoryColumn, warehouseColumn,shelveColumn,latticeColumn,loadInfoColumn);
 
 		
 		
@@ -229,20 +242,46 @@ public class DeviceListController extends BaseViewController {
 	public void deleteAction(ActionEvent event) {
 
 		// 获取选中的行数
-		// User user = mTableView.getSelectionModel().getSelectedItem();
-		// System.out.println("select user " + user);
+		 Device device = mTableView.getSelectionModel().getSelectedItem();
 
-		//
-		// new WAlert.Builder().message("确定删除"+user.getName() +
-		// "吗？").create().show();
+		 if(device != null) {
+			 Optional<ButtonType> result = WAlert.showConfirmationMessageAlert("是否删除本条数据，删除后，相应的工具借还记录也会被删除");
+			 
+				if (result.get() == ButtonType.OK){
 
-		// 还是需要添加事件的
+					//删除数据
+					
+					deviceLoanInfoDao.delete(device);
+					
+					deviceDao.delete(device);
+					
+				} 
+		 }else {
+			 WAlert.showMessageAlert("请选择一条数据");
+		 }
+		
+		 
+		
 	}
 
 	public void editAction(ActionEvent event) {
-		System.out.println("edit");
+//		System.out.println("edit");
 
 		// 确定编辑这个用户吗
+		 Device device = mTableView.getSelectionModel().getSelectedItem();
+
+		 if(device != null) {
+
+			 WFxIntent intent = new WFxIntent(DeviceAddController.class);
+			 
+			 intent.putExtra("isEdit", true);
+			 intent.putExtra("data", device);
+			 
+			 presentController(intent);
+		 }else {
+			 WAlert.showMessageAlert("请选择一条数据");
+
+		 }
 	}
 
 	public List<Device> loadLoanInfo(List<Device> devices) {
@@ -255,7 +294,7 @@ public class DeviceListController extends BaseViewController {
 			 DeviceLoanInfo info = list.get(i);
 			 
 			int index = devices.indexOf(info.getDevice());
-			 System.out.println(">>>>"+index);
+//			 System.out.println(">>>>"+index);
 
 			 if(index >=0) {
 				 Device device = devices.get(index);

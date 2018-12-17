@@ -9,7 +9,6 @@ import com.wy.store.common.eventbus.WEventBus;
 import com.wy.store.common.finger.WFingerService;
 import com.wy.store.common.finger.WFingerServiceEnrollListener;
 import com.wy.store.common.finger.WFingerServiceFactory;
-import com.wy.store.common.finger.WFingerServiceListener;
 import com.wy.store.common.finger.WFingerServiceLoadListener;
 import com.wy.store.common.view.WAlert;
 import com.wy.store.db.dao.UserDao;
@@ -28,7 +27,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 
 @ViewController(res = "/layout_user_add")
 @Scope("prototype") // 默认是单例
@@ -53,11 +51,22 @@ public class UserAddController extends BaseViewController implements WFingerServ
 	
 	UserFinger currentFinger;
 	
+	
+	User editUser;
+	
+	boolean isEdit;
+	
 	@Override
 	public void onCreate(WFxIntent intent) {
 		// TODO Auto-generated method stub
 		super.onCreate(intent);
 		setTitle("添加用户");
+		if(intent.getExtras() != null) {
+			
+			isEdit = (boolean) intent.getExtras().get("isEdit");
+			editUser = (User) intent.getExtras().get("data");
+			
+		}
 
 		fingerDao = new UserFingerDaoImpl();
 		userDao = new UserDaoImpl();
@@ -66,8 +75,14 @@ public class UserAddController extends BaseViewController implements WFingerServ
 		fingerService.register(this);
 
 		currentFinger = new UserFinger();
+
+		if(isEdit && editUser != null) {
+			setTitle("编辑用户");
+			mNameTextField.setText(editUser.getName());
+			mUserCodeTextField.setText(editUser.getUserId());
+			
+		}
 		
-		System.out.println("maxid = " + fingerDao.getNextId());
 	}
 
 	@Override
@@ -82,8 +97,8 @@ public class UserAddController extends BaseViewController implements WFingerServ
 	public void onDeviceConnectFailed(String s) {
 		// TODO Auto-generated method stub
 		
-		System.err.println("指纹仪连接状态: " + s);
-		
+		 fingerMsgLabel.setText("指纹仪连接失败");
+
 	}
 	
 
@@ -180,6 +195,14 @@ public class UserAddController extends BaseViewController implements WFingerServ
 
 		// 检查各种信息是否填写完成
 
+		if(isEdit) {
+			edit();
+		}else {
+			add();
+		}
+	}
+	
+	private void add() {
 		if (checkForm()) {
 
 			User user = new User(mUserCodeTextField.getText().trim(),
@@ -189,7 +212,7 @@ public class UserAddController extends BaseViewController implements WFingerServ
 
 			boolean isExist = userDao.isExist(user.getUserId());
 			System.out.println("isexist = " + isExist);
-			if (!userDao.isExist(user.getUserId())) {
+			if (!isExist) {
 
 		
 				fingerDao.addFinger(currentFinger);
@@ -200,7 +223,49 @@ public class UserAddController extends BaseViewController implements WFingerServ
 
 				
 				WAlert.showMessageAlert("用户添加成功");
+				
+				resetAction(null);
 
+				mNameTextField.setText("");
+				mUserCodeTextField.setText("");
+				
+				
+			} else {
+				WAlert.showMessageAlert("当前用户编号已经存在");
+			}
+
+		} else {
+			WAlert.showMessageAlert("检查表单是否填写完成");
+
+		}
+	}
+	
+	private void edit() {
+		if (checkForm()) {
+
+			
+			editUser.setName(mNameTextField.getText().trim());
+			editUser.setUserId(mUserCodeTextField.getText().trim());
+			
+			boolean isExist = userDao.isExist(editUser.getUserId());
+			if (!isExist) {
+
+		
+				fingerDao.addFinger(currentFinger);
+				editUser.setFingerId(currentFinger.getFingerId());
+				userDao.update(editUser);
+
+				WEventBus.getDefaultEventBus().post(new WUserAddEvent());;
+
+				
+				WAlert.showMessageAlert("用户修改成功");
+				
+				resetAction(null);
+
+				mNameTextField.setText("");
+				mUserCodeTextField.setText("");
+				dismissController();
+				
 			} else {
 				WAlert.showMessageAlert("当前用户编号已经存在");
 			}

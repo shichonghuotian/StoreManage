@@ -44,6 +44,19 @@ public class WarhouseDaoImpl implements WarhouseDao {
 		return b == 1;
 
 	}
+	@Override
+	public boolean update(Warehouse warehouse) {
+		int b = 0;
+		try {
+			b = dao.update(warehouse);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		return b == 1;
+		
+	}
 
 	@Override
 	public boolean addList(List<Warehouse> list) {

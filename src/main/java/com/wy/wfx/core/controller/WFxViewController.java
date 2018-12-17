@@ -104,39 +104,46 @@ public abstract class WFxViewController implements Initializable{
 	 * @param intent
 	 * @throws Exception 
 	 */
-	public void presentController(WFxIntent intent) throws Exception {
+	public void presentController(WFxIntent intent) {
 		
-		WViewContext<? extends WFxViewController> viewContext = getViewContext(intent.getControllerClass());
-		WFxViewController controller = viewContext.getController();
-		
-		Stage stage = new Stage();
-		Scene scene = new Scene((Parent) viewContext.getRootNode());
-		// viewContext.getController().setParentStage(primaryStage);
-		stage.setScene(scene);
-		controller.setKeyWindow(stage);
-		stage.initModality(Modality.WINDOW_MODAL);
-		if (this.keyWindow != null) {
-			stage.initOwner(this.keyWindow);
-		}
-
-//		stage.setAlwaysOnTop(true);
-
-		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+		WViewContext<? extends WFxViewController> viewContext;
+		try {
+			viewContext = getViewContext(intent.getControllerClass());
+			WFxViewController controller = viewContext.getController();
 			
-			@Override
-			public void handle(WindowEvent event) {
-				// TODO Auto-generated method stub
-				controller.onDestroy();
-
+			Stage stage = new Stage();
+			Scene scene = new Scene((Parent) viewContext.getRootNode());
+			// viewContext.getController().setParentStage(primaryStage);
+			stage.setScene(scene);
+			controller.setKeyWindow(stage);
+			stage.initModality(Modality.WINDOW_MODAL);
+			if (this.keyWindow != null) {
+				stage.initOwner(this.keyWindow);
 			}
-		});
-		controller.setView(viewContext.getRootNode());
 
-		controller.onCreate(intent);
+//			stage.setAlwaysOnTop(true);
 
+			stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+				
+				@Override
+				public void handle(WindowEvent event) {
+					// TODO Auto-generated method stub
+					controller.onDestroy();
+
+				}
+			});
+			controller.setView(viewContext.getRootNode());
+
+			controller.onCreate(intent);
+
+			
+			// //会阻塞下面的代码
+			stage.showAndWait();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-		// //会阻塞下面的代码
-		stage.showAndWait();
 		
 
 	}

@@ -17,15 +17,13 @@ import com.wy.store.domain.Category;
 import com.wy.store.domain.User;
 
 @Component
-public class CategoryDaoImpl implements CategoryDao{
+public class CategoryDaoImpl implements CategoryDao {
 
-	
 	Dao<Category, Long> dao;
-
 
 	public CategoryDaoImpl() {
 		// TODO Auto-generated constructor stub
-		
+
 		try {
 			dao = DaoManager.createDao(StoreDB.getConnectionSource(), Category.class);
 		} catch (SQLException e) {
@@ -33,7 +31,6 @@ public class CategoryDaoImpl implements CategoryDao{
 			e.printStackTrace();
 		}
 	}
-
 
 	@Override
 	public boolean add(Category category) {
@@ -46,8 +43,22 @@ public class CategoryDaoImpl implements CategoryDao{
 			e1.printStackTrace();
 		}
 
-		return b == 1;	}
+		return b == 1;
+	}
 
+	@Override
+	public boolean update(Category category) {
+		// TODO Auto-generated method stub
+		int b = 0;
+		try {
+			b = dao.update(category);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		return b == 1;
+	}
 
 	@Override
 	public List<Category> getAll() {
@@ -59,100 +70,96 @@ public class CategoryDaoImpl implements CategoryDao{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		return new ArrayList<>();	
-		
-	}
 
+		return new ArrayList<>();
+
+	}
 
 	@Override
 	public boolean addList(List<Category> list) {
 		try {
-			  return	dao.create(list) == 1;
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			return false;	
-			
+			return dao.create(list) == 1;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return false;
+
 	}
-	
+
 	@Override
 	public List<Category> getCategoryList(long parentId) {
-		
+
 		List<Category> list = new ArrayList<>();
-		
+
 		try {
 
-//			mDao.queryBuilder().where().like("LastName", "A%").query()
+			// mDao.queryBuilder().where().like("LastName", "A%").query()
 			list = dao.queryBuilder().where().eq("parentCategory_id", parentId).query();
-		
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-	
-		
 		return list;
-		
-	}
 
+	}
 
 	public Category getCategory(String name) {
-		
+
 		try {
-            QueryBuilder<Category, Long> builder =    dao.queryBuilder();
-            Where<Category, Long> where = builder.where();
-            where.eq("name", name);
-            
-            PreparedQuery<Category> preparedQuery = builder.prepare();
+			QueryBuilder<Category, Long> builder = dao.queryBuilder();
+			Where<Category, Long> where = builder.where();
+			where.eq("name", name);
+
+			PreparedQuery<Category> preparedQuery = builder.prepare();
 
 			return dao.queryForFirst(preparedQuery);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
 
 	@Override
-	public Category getCategory(long parentId,String name) {
-		
+	public Category getCategory(long parentId, String name) {
+
 		try {
-            QueryBuilder<Category, Long> builder =    dao.queryBuilder();
-            Where<Category, Long> where = builder.where();
-            where.eq("parentCategory_id", parentId).and().eq("name", name);
-            
-            PreparedQuery<Category> preparedQuery = builder.prepare();
+			QueryBuilder<Category, Long> builder = dao.queryBuilder();
+			Where<Category, Long> where = builder.where();
+			where.eq("parentCategory_id", parentId).and().eq("name", name);
+
+			PreparedQuery<Category> preparedQuery = builder.prepare();
 
 			return dao.queryForFirst(preparedQuery);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
 
 	@Override
-	public Category getCategoryByCode(long parentId,String code) {
-		
+	public Category getCategoryByCode(long parentId, String code) {
+
 		try {
-            QueryBuilder<Category, Long> builder =    dao.queryBuilder();
-            Where<Category, Long> where = builder.where();
-            where.eq("parentCategory_id", parentId).and().eq("code", code);
-            
-            PreparedQuery<Category> preparedQuery = builder.prepare();
+			QueryBuilder<Category, Long> builder = dao.queryBuilder();
+			Where<Category, Long> where = builder.where();
+			where.eq("parentCategory_id", parentId).and().eq("code", code);
+
+			PreparedQuery<Category> preparedQuery = builder.prepare();
 
 			return dao.queryForFirst(preparedQuery);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
 
@@ -161,10 +168,8 @@ public class CategoryDaoImpl implements CategoryDao{
 		// TODO Auto-generated method stub
 		Category category = getCategory(name);
 		return category != null;
-		
-	}
 
-	
+	}
 
 	@Override
 	public boolean delete(Category category) {
@@ -178,6 +183,4 @@ public class CategoryDaoImpl implements CategoryDao{
 		return true;
 	}
 
-
-	
 }

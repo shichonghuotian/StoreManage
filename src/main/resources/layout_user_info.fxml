@@ -12,8 +12,9 @@
          <children>
             <Pane prefHeight="61.0" prefWidth="437.0">
                <children>
-                  <Button fx:id="mDeleteButton" layoutX="72.0" layoutY="14.0" mnemonicParsing="false" onAction="#deleteAction" text="删除" />
+                  <Button fx:id="mEditButton" layoutX="72.0" layoutY="14.0" mnemonicParsing="false" onAction="#editAction" text="编辑" />
                   <Button fx:id="mAddButton" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#addAction" text="添加" />
+                  <Button fx:id="mDeleteButton" layoutX="131.0" layoutY="14.0" mnemonicParsing="false" onAction="#deleteAction" text="删除" />
                </children>
             </Pane>
             <TableView fx:id="mTableView" layoutX="4.0" layoutY="54.0" prefHeight="454.0" prefWidth="836.0">

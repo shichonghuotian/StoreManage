@@ -1,5 +1,7 @@
 package com.wy.store.domain;
 
+import java.util.Date;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -32,7 +34,14 @@ public class Device {
 	@DatabaseField(foreign = true,foreignAutoRefresh=true)
 	private Warehouse warehouse;
 
-	
+	@DatabaseField
+	private String warehouseShelve;
+	@DatabaseField
+	private String shelveLattice;
+
+	//归还时间
+		@DatabaseField
+		private Date createDate;
 	//添加描述
 	@DatabaseField
 	private String description;
@@ -143,6 +152,31 @@ public class Device {
 	}
 	
 	
+
+	public String getWarehouseShelve() {
+		return warehouseShelve;
+	}
+
+	public void setWarehouseShelve(String warehouseShelve) {
+		this.warehouseShelve = warehouseShelve;
+	}
+
+	public String getShelveLattice() {
+		return shelveLattice;
+	}
+
+	public void setShelveLattice(String shelveLattice) {
+		this.shelveLattice = shelveLattice;
+	}
+
+	
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
 
 	@Override
 	public int hashCode() {

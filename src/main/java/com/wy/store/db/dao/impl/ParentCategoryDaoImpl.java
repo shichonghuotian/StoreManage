@@ -43,7 +43,8 @@ public class ParentCategoryDaoImpl implements ParentCategoryDao{
 			e1.printStackTrace();
 		}
 
-		return b == 1;	}
+		return b == 1;
+	}
 
 
 	@Override
@@ -135,6 +136,20 @@ public class ParentCategoryDaoImpl implements ParentCategoryDao{
 			e.printStackTrace();
 		}
 		return true;
+	}
+
+
+	@Override
+	public boolean update(ParentCategory category) {
+		int b = 0;
+		try {
+			b = dao.update(category);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		return b == 1;
 	}
 
 }

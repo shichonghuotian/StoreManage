@@ -198,4 +198,28 @@ public class DeviceDaoImpl implements DeviceDao {
 		return devices;
 	}
 
+	@Override
+	public void delete(Device device) {
+		// TODO Auto-generated method stub
+		
+		try {
+			dao.delete(device);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void update(Device device) {
+		// TODO Auto-generated method stub
+		
+		try {
+			dao.update(device);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 }

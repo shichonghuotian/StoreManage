@@ -8,6 +8,7 @@ public interface CategoryDao {
 
 	
 	public boolean add(Category category);
+	public boolean update(Category category);
 	public boolean isExist(String name);
 	public Category getCategoryByCode(long parentId,String code);
 	

@@ -6,6 +6,7 @@ import com.google.common.eventbus.Subscribe;
 import com.wy.store.app.BaseViewController;
 import com.wy.store.common.eventbus.RxEventBus;
 import com.wy.store.common.eventbus.WEventBus;
+import com.wy.store.common.view.WAlert;
 import com.wy.store.db.dao.CategoryDao;
 import com.wy.store.db.dao.impl.CategoryDaoImpl;
 import com.wy.store.domain.Category;
@@ -14,6 +15,7 @@ import com.wy.store.domain.ParentCategory;
 import com.wy.store.domain.User;
 import com.wy.store.domain.Warehouse;
 import com.wy.store.modules.devices.add.DeviceAddController;
+import com.wy.store.modules.devices.category.parent.DeviceParentCategoryAddController;
 import com.wy.wfx.core.ann.ViewController;
 import com.wy.wfx.core.controller.WFxIntent;
 
@@ -112,16 +114,29 @@ public class DeviceCategoryListController extends BaseViewController{
 		  mCategoryDao.delete(category);
 		  
 		  observableList.remove(category);
-		  
-		// 获取选中的行数
-		// User user = mTableView.getSelectionModel().getSelectedItem();
-		// System.out.println("select user " + user);
+	
+	}
+	
+	public void editAction(ActionEvent event) {
+		Category category = mTableView.getSelectionModel().getSelectedItem();
 
-		//
-		// new WAlert.Builder().message("确定删除"+user.getName() +
-		// "吗？").create().show();
+		if (category != null) {
 
-		// 还是需要添加事件的
+			WFxIntent intent = new WFxIntent(DeviceCategoryAddController.class);
+
+			intent.putExtra("isEdit", true);
+			intent.putExtra("category", category);
+
+			try {
+				presentController(intent);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+
+			WAlert.showMessageAlert("请选择一条数据");
+		}
 	}
 
 }

@@ -148,16 +148,11 @@ public class UserListController extends BaseViewController {
 
 		// 获取选中的行数
 		User user = mTableView.getSelectionModel().getSelectedItem();
-		System.out.println("select user " + user);
-
-		//需要查看是否有借出记录
-
-		boolean t = false;
-		if (t) {
-			WAlert.showMessageAlert("当前管理员已经登陆，请退出重新登陆后删除");
+		if (user == null) {
+			WAlert.showMessageAlert("请选择一条记录");
 
 		} else {
-			Optional<ButtonType> result = WAlert.showConfirmationMessageAlert("确定删除" + user.getName() + "吗？");
+			Optional<ButtonType> result = WAlert.showConfirmationMessageAlert("确定删除" + user.getName() + "？\n 注意删除后相应的信息也要清空掉");
 
 			if (result.get() == ButtonType.OK) {
 				
@@ -172,9 +167,21 @@ public class UserListController extends BaseViewController {
 	}
 
 	public void editAction(ActionEvent event) {
-		System.out.println("edit");
+		User user = mTableView.getSelectionModel().getSelectedItem();
+		if (user == null) {
+			WAlert.showMessageAlert("请选择一条记录");
 
-		// 确定编辑这个用户吗
+		} else {
+			
+			WFxIntent intent = new WFxIntent(UserAddController.class);
+			
+			intent.putExtra("isEdit", true);
+			
+			intent.putExtra("data", user);
+			
+			presentController(intent);
+		}
+		
 	}
 
 }

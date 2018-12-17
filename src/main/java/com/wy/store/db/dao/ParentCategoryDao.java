@@ -8,7 +8,8 @@ public interface ParentCategoryDao {
 
 	
 	public boolean add(ParentCategory category);
-	
+	public boolean update(ParentCategory category);
+
 	public ParentCategory getCategory(String name);
 	public ParentCategory getCategoryByCode(String code);
 
