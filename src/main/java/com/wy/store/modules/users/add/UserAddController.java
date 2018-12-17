@@ -24,6 +24,7 @@ import com.wy.wfx.core.controller.WFxIntent;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
@@ -41,6 +42,11 @@ public class UserAddController extends BaseViewController implements WFingerServ
 	ProgressBar fingerProgressBar;
 	@FXML
 	Label fingerMsgLabel;
+	@FXML
+	Button beginButton;
+	@FXML
+	Button resetButton;
+	
 	
 	
 	UserDao userDao;
@@ -80,7 +86,9 @@ public class UserAddController extends BaseViewController implements WFingerServ
 			setTitle("编辑用户");
 			mNameTextField.setText(editUser.getName());
 			mUserCodeTextField.setText(editUser.getUserId());
-			
+			mUserCodeTextField.setDisable(true);
+			resetButton.setDisable(true);
+			beginButton.setDisable(true);
 		}
 		
 	}
@@ -203,7 +211,7 @@ public class UserAddController extends BaseViewController implements WFingerServ
 	}
 	
 	private void add() {
-		if (checkForm()) {
+		if (checkForm(true)) {
 
 			User user = new User(mUserCodeTextField.getText().trim(),
 					mNameTextField.getText().trim());
@@ -241,18 +249,16 @@ public class UserAddController extends BaseViewController implements WFingerServ
 	}
 	
 	private void edit() {
-		if (checkForm()) {
+		if (checkForm(false)) {
 
 			
 			editUser.setName(mNameTextField.getText().trim());
 			editUser.setUserId(mUserCodeTextField.getText().trim());
 			
-			boolean isExist = userDao.isExist(editUser.getUserId());
+			boolean isExist = false;
 			if (!isExist) {
 
 		
-				fingerDao.addFinger(currentFinger);
-				editUser.setFingerId(currentFinger.getFingerId());
 				userDao.update(editUser);
 
 				WEventBus.getDefaultEventBus().post(new WUserAddEvent());;
@@ -276,12 +282,16 @@ public class UserAddController extends BaseViewController implements WFingerServ
 		}
 	}
 
-	public boolean checkForm() {
+	public boolean checkForm(boolean needb) {
 		
 		boolean b = currentFinger.getFingerBlob() != null;
 
-		return !StringUtils.isEmpty(mUserCodeTextField.getText()) && !StringUtils.isEmpty(mNameTextField.getText())
+		if(needb) 
+			return !StringUtils.isEmpty(mUserCodeTextField.getText()) && !StringUtils.isEmpty(mNameTextField.getText())
 				 && b;
+		
+		return  !StringUtils.isEmpty(mUserCodeTextField.getText()) && !StringUtils.isEmpty(mNameTextField.getText())
+				 ;
 	}
 
 
