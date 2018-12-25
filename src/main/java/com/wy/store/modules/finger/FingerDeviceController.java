@@ -67,6 +67,7 @@ public class FingerDeviceController extends BaseViewController implements WFinge
 		if(!fingerService.isOpen()) {
 			
 			fingerService.openDevice();
+			fingerService.addFingerDataToDevice();
 		}else {
 			
 			WAlert.showMessageAlert("设备已经连接");

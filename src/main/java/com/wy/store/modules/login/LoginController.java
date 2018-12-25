@@ -47,8 +47,8 @@ public class LoginController extends BaseViewController{
 		super.onCreate(intent);
 		setTitle("登录");
 		managerDao = new ManagerDaoImpl();
-		mNameTextField.setText("admin");
-		mPwdTextField.setText("admin");
+//		mNameTextField.setText("admin");
+//		mPwdTextField.setText("admin");
 		Stage stage = (Stage) getKeyWindow();
 	
 		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {

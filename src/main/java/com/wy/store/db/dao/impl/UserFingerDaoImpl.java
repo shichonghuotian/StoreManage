@@ -1,6 +1,7 @@
 package com.wy.store.db.dao.impl;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.j256.ormlite.dao.Dao;
@@ -46,7 +47,7 @@ public class UserFingerDaoImpl implements UserFingerDao{
 
 	@Override
 	public List<UserFinger> getAllUserFingers() {
-		List<UserFinger> list = null;
+		List<UserFinger> list = new ArrayList<>();
 		try {
 			list = dao.queryForAll();
 		} catch (SQLException e) {

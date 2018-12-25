@@ -174,7 +174,8 @@ public class UserAddController extends BaseViewController implements WFingerServ
 
 		if(!fingerService.isOpen()) {
 			fingerService.openDevice();
-			
+			fingerService.addFingerDataToDevice();
+
 		}
 		fingerMsgLabel.setText("指纹设备已经连接");
 		fingerService.enrollFinger();

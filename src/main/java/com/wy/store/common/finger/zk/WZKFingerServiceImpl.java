@@ -161,7 +161,7 @@ public class WZKFingerServiceImpl implements WFingerService {
 			addFinger(finger);
 		}
 		
-		System.out.println("add finger spend time = " + (System.currentTimeMillis() - time));
+//		System.out.println("add finger spend time = " + (System.currentTimeMillis() - time));
 	
 	}
 	
